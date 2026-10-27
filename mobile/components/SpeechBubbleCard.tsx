@@ -1,5 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import Svg, { Polygon } from "react-native-svg";
+import { useState } from "react";
+import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from "react-native";
+import Svg, { Path } from "react-native-svg";
 import { fonts } from "@/constants/theme";
 
 type Props = {
@@ -10,14 +11,67 @@ type Props = {
 };
 
 const WHITE = "#fafdfe";
+const BUBBLE_H = 76;
+const TAIL_H = 14;
+/** Matches the HTML border: 2px — keep the full stroke inside the canvas. */
+const STROKE = 2;
+const PAD = STROKE / 2;
 
-/** Styles follow the shared speech-bubble HTML stylesheet. */
+/**
+ * Continuous outline inset by half the stroke so every side draws at the
+ * same 2px thickness (edge strokes are not clipped by the SVG bounds).
+ */
+function bubblePath(outerW: number, outerH: number) {
+  const x0 = PAD;
+  const y0 = PAD;
+  const x1 = outerW - PAD;
+  const y1 = outerH - PAD;
+  const w = x1 - x0;
+  const h = y1 - y0;
+
+  const rtl = 28;
+  const rtr = 26;
+  const rbr = 32;
+  const rbl = 18;
+  const rise = h * 0.045;
+  const leftBottom = y0 + h;
+  const rightBottom = y0 + h - rise;
+  const tailX = x0 + 16;
+  const tipX = x0 + 1;
+  const tipY = leftBottom + TAIL_H - PAD;
+  const tailRight = x0 + 38;
+
+  return [
+    `M ${x0 + rtl} ${y0}`,
+    `H ${x1 - rtr}`,
+    `Q ${x1} ${y0} ${x1} ${y0 + rtr}`,
+    `L ${x1} ${rightBottom - rbr}`,
+    `Q ${x1} ${rightBottom} ${x1 - rbr} ${rightBottom}`,
+    `L ${tailRight} ${leftBottom}`,
+    `L ${tipX} ${tipY}`,
+    `L ${tailX} ${leftBottom}`,
+    `L ${x0 + rbl} ${leftBottom}`,
+    `Q ${x0} ${leftBottom} ${x0} ${leftBottom - rbl}`,
+    `L ${x0} ${y0 + rtl}`,
+    `Q ${x0} ${y0} ${x0 + rtl} ${y0}`,
+    "Z",
+  ].join(" ");
+}
+
 export function SpeechBubbleCard({
   title,
   borderColor,
   arrowColor,
   onPress,
 }: Props) {
+  const [width, setWidth] = useState(0);
+
+  function onBubbleLayout(e: LayoutChangeEvent) {
+    setWidth(e.nativeEvent.layout.width);
+  }
+
+  const svgH = BUBBLE_H + TAIL_H;
+
   return (
     <Pressable
       onPress={onPress}
@@ -25,19 +79,25 @@ export function SpeechBubbleCard({
       accessibilityLabel={title}
       style={({ pressed }) => [styles.tile, pressed && { opacity: 0.92 }]}
     >
-      <View style={styles.speechBubble}>
-        <View style={styles.bubbleShape} pointerEvents="none">
-          <View style={styles.bottomClip}>
-            <View style={[styles.bubbleBottom, { borderColor }]} />
-          </View>
-          <View style={[styles.bubbleTop, { borderColor }]} />
-          <Svg width={26} height={18} style={styles.tailOutline}>
-            <Polygon points="3.12,0 26,0 0,18" fill={borderColor} />
+      <View style={styles.speechBubble} onLayout={onBubbleLayout}>
+        {width > 0 ? (
+          <Svg
+            width={width}
+            height={svgH}
+            style={styles.bubbleSvg}
+            pointerEvents="none"
+          >
+            <Path
+              d={bubblePath(width, BUBBLE_H)}
+              fill={WHITE}
+              stroke={borderColor}
+              strokeWidth={STROKE}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              vectorEffect="nonScalingStroke"
+            />
           </Svg>
-          <Svg width={22} height={16} style={styles.tailFill}>
-            <Polygon points="2.64,0 22,0 0,16" fill={WHITE} />
-          </Svg>
-        </View>
+        ) : null}
 
         <View style={styles.bubbleText}>
           <Text style={styles.bubbleTextLabel} numberOfLines={3}>
@@ -67,68 +127,12 @@ const styles = StyleSheet.create({
   speechBubble: {
     position: "relative",
     width: "100%",
-    height: 76,
+    height: BUBBLE_H,
   },
-  bubbleShape: {
+  bubbleSvg: {
     position: "absolute",
     top: 0,
-    right: 0,
-    bottom: 0,
     left: 0,
-  },
-  bubbleTop: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    left: 0,
-    height: 44,
-    borderWidth: 2,
-    borderBottomWidth: 0,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 28,
-    backgroundColor: WHITE,
-  },
-  /* clip-path: inset(40% 0 0 0) */
-  bottomClip: {
-    position: "absolute",
-    top: "40%",
-    right: 0,
-    bottom: 0,
-    left: 0,
-    overflow: "hidden",
-  },
-  bubbleBottom: {
-    position: "absolute",
-    top: "-66.7%",
-    right: 0,
-    bottom: 0,
-    left: 0,
-    borderWidth: 2,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 28,
-    borderBottomRightRadius: 38,
-    borderBottomLeftRadius: 23,
-    backgroundColor: WHITE,
-    transform: [{ skewY: "-2deg" }],
-    transformOrigin: "left bottom",
-  },
-  /* ::before — polygon(12% 0, 100% 0, 0 100%) */
-  tailOutline: {
-    position: "absolute",
-    zIndex: 1,
-    left: 18,
-    bottom: -14,
-    width: 26,
-    height: 18,
-  },
-  /* ::after */
-  tailFill: {
-    position: "absolute",
-    zIndex: 2,
-    left: 20,
-    bottom: -10,
-    width: 22,
-    height: 16,
   },
   bubbleText: {
     position: "relative",
