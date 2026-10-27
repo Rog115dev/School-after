@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
   },
   row: {
-    gap: 14,
-    marginBottom: 4,
+    gap: 12,
+    marginBottom: 2,
   },
 });

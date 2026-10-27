@@ -51,7 +51,9 @@ export default function QuestionScreen() {
                   <View style={[styles.badge, { backgroundColor: accent }]}>
                     <Text style={styles.badgeText}>{index + 1}</Text>
                   </View>
-                  <Text style={styles.cardTitle}>{item.title}</Text>
+                  <Text style={styles.cardTitle} numberOfLines={2}>
+                    {item.title}
+                  </Text>
                   <View style={[styles.chevron, { backgroundColor: accent }]}>
                     <Ionicons name="chevron-forward" size={16} color="#fff" />
                   </View>
@@ -74,7 +76,6 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
   },
   list: {
-    flexGrow: 1,
     gap: 12,
   },
   hint: {
@@ -87,15 +88,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   card: {
-    flexGrow: 1,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    minHeight: 92,
+    height: 88,
     backgroundColor: "#FFFFFF",
     borderWidth: 2,
     borderRadius: 18,
-    paddingVertical: 14,
     paddingLeft: 14,
     paddingRight: 12,
   },

@@ -26,9 +26,9 @@ export function WelcomeCover({ onContinue }: { onContinue: () => void }) {
       />
       <View style={styles.wash} />
       <SafeAreaView style={styles.safe} edges={["top"]}>
-      <View style={styles.top}>
-        <BrandMark size={48} />
-      </View>
+      {/* <View style={styles.top}>
+        <BrandMark size={58} />
+      </View> */}
 
       <View style={styles.middle}>
         <Text style={styles.question}>{coverQuestion}</Text>

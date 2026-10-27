@@ -118,6 +118,7 @@ export default function SubtopicScreen() {
         <View style={styles.tiles}>
           <LeafTile
             delay={40}
+            height={TILE_H}
             color="#7EB6E8"
             label="Intro video"
             icon={<Ionicons name="play-circle" size={42} color="#fff" />}
@@ -126,6 +127,7 @@ export default function SubtopicScreen() {
           />
           <LeafTile
             delay={80}
+            height={TILE_H}
             color="#8EABD9"
             label="Myth vs fact"
             icon={
@@ -144,6 +146,7 @@ export default function SubtopicScreen() {
           />
           <LeafTile
             delay={120}
+            height={TILE_H}
             color="#8FC9A8"
             label="Try this at home"
             icon={<Ionicons name="home" size={34} color="#fff" />}
@@ -210,6 +213,8 @@ export default function SubtopicScreen() {
   );
 }
 
+const TILE_H = 112;
+
 const styles = StyleSheet.create({
   page: {
     flexGrow: 1,
@@ -217,7 +222,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   tiles: {
-    flexGrow: 1,
     gap: 12,
   },
   action: {
@@ -225,7 +229,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    minHeight: 52,
+    height: 52,
     borderRadius: 16,
     backgroundColor: colors.banner,
   },
@@ -244,6 +248,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
+    minHeight: 72,
     backgroundColor: "#FFF6E8",
     borderRadius: 16,
     paddingVertical: 14,

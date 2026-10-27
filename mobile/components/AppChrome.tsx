@@ -64,7 +64,7 @@ export function AppChrome({
           </Text>
 
           <View style={styles.logoWrap}>
-            <BrandMark size={42} />
+            <BrandMark size={52} />
           </View>
         </View>
 
@@ -118,7 +118,9 @@ export function AppChrome({
 export function PillBanner({ label }: { label: string }) {
   return (
     <Animated.View entering={FadeInDown.duration(280)} style={styles.pill}>
-      <Text style={styles.pillText}>{label}</Text>
+      <Text style={styles.pillText} numberOfLines={2}>
+        {label}
+      </Text>
     </Animated.View>
   );
 }
@@ -130,6 +132,7 @@ export function LeafTile({
   empty,
   color,
   delay = 0,
+  height,
 }: {
   label?: string;
   onPress?: () => void;
@@ -137,6 +140,8 @@ export function LeafTile({
   empty?: boolean;
   color?: string;
   delay?: number;
+  /** When set, every tile keeps this height instead of stretching. */
+  height?: number;
 }) {
   const body = (
     <Animated.View
@@ -145,13 +150,16 @@ export function LeafTile({
         styles.leaf,
         color ? { backgroundColor: color } : null,
         empty && styles.leafEmpty,
+        height ? { flex: 0, minHeight: height, height } : null,
       ]}
     >
       {icon}
       {label ? <Text style={styles.leafText}>{label}</Text> : null}
     </Animated.View>
   );
-  const frame = { flex: 1, minHeight: 128, alignSelf: "stretch" as const };
+  const frame = height
+    ? { height, alignSelf: "stretch" as const }
+    : { flex: 1, minHeight: 128, alignSelf: "stretch" as const };
   if (!onPress || empty) {
     return <View style={frame}>{body}</View>;
   }
@@ -219,10 +227,11 @@ const styles = StyleSheet.create({
     lineHeight: 21,
   },
   logoWrap: {
-    width: 46,
-    height: 50,
+    width: 56,
+    height: 56,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "transparent",
   },
   starRow: {
     paddingHorizontal: spacing.lg,
@@ -269,12 +278,14 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
     minWidth: "78%",
     alignItems: "center",
+    justifyContent: "center",
   },
   pillText: {
     color: "#fff",
     fontWeight: "800",
     fontSize: 20,
     textAlign: "center",
+    lineHeight: 24,
   },
   leaf: {
     flex: 1,
