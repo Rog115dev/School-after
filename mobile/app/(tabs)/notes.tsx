@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   switchText: {
     color: colors.muted,
     fontFamily: fonts.bold,
-    fontSize: 14,
+    fontSize: 16,
   },
   switchTextOn: {
     color: colors.headerInk,
@@ -262,8 +262,8 @@ const styles = StyleSheet.create({
   prompt: {
     color: colors.ink,
     fontFamily: fonts.semibold,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 17,
+    lineHeight: 24,
     marginBottom: spacing.sm,
   },
   paper: {
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     color: colors.ink,
     fontFamily: fonts.regular,
-    fontSize: 16,
+    fontSize: 18,
     lineHeight: 28,
     padding: 0,
   },
@@ -310,14 +310,14 @@ const styles = StyleSheet.create({
   },
   when: {
     fontFamily: fonts.extrabold,
-    fontSize: 13,
+    fontSize: 15,
     color: colors.headerInk,
   },
   preview: {
     color: colors.ink,
     fontFamily: fonts.semibold,
-    fontSize: 15,
-    lineHeight: 21,
+    fontSize: 17,
+    lineHeight: 23,
   },
   readContent: {
     paddingBottom: spacing.xl,
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   backText: {
     color: colors.headerInk,
     fontFamily: fonts.bold,
-    fontSize: 14,
+    fontSize: 16,
   },
   readCard: {
     backgroundColor: "#FFFEFA",
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   readBody: {
     color: colors.ink,
     fontFamily: fonts.regular,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 18,
+    lineHeight: 26,
   },
 });

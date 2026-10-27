@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     fontWeight: "800",
-    fontSize: 20,
+    fontSize: 22,
     color: colors.headerInk,
   },
   close: {
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     color: colors.ink,
     marginBottom: 8,
-    fontSize: 16,
+    fontSize: 18,
   },
   empty: {
     color: colors.muted,

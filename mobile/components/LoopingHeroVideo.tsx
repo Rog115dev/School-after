@@ -31,7 +31,7 @@ export function LoopingHeroVideo({ style }: Props) {
     <View style={[styles.wrap, frame]}>
       <Video
         ref={ref}
-        source={require("../assets/videos/question-mark.mp4")}
+        source={require("../assets/videos/louise-mark.mp4")}
         style={[styles.video, frame]}
         resizeMode={ResizeMode.CONTAIN}
         shouldPlay={focused}

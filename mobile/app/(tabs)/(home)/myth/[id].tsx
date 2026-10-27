@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   prompt: {
     color: colors.headerInk,
     fontFamily: fonts.bold,
-    fontSize: 16,
+    fontSize: 18,
     textAlign: "center",
     marginBottom: spacing.sm,
   },
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   statement: {
-    fontSize: 21,
+    fontSize: 23,
     fontWeight: "800",
     color: colors.ink,
     lineHeight: 30,
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
   feedbackText: {
     color: colors.ink,
     lineHeight: 22,
-    fontSize: 15,
+    fontSize: 17,
   },
   guess: {
     color: colors.muted,
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
   factText: {
     fontWeight: "800",
     color: colors.ink,
-    fontSize: 16,
+    fontSize: 18,
   },
   factExplain: {
     color: colors.muted,

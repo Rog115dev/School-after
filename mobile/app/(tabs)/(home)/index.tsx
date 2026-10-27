@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   FlatList,
   RefreshControl,
@@ -11,8 +11,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { api } from "@/lib/api";
 import { HomeHeader } from "@/components/HomeHeader";
 import { SpeechBubbleCard } from "@/components/SpeechBubbleCard";
+import { WelcomeCover } from "@/components/WelcomeCover";
 import { Empty, Loading } from "@/components/ui";
 import { colors, spacing } from "@/constants/theme";
+import { subscribeHomePage } from "@/lib/homeTab";
 
 type Question = {
   id: string;
@@ -27,6 +29,9 @@ export default function HomeScreen() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [entered, setEntered] = useState(false);
+
+  useEffect(() => subscribeHomePage(() => setEntered(false)), []);
 
   const gap = 14;
   const horizontal = spacing.md;
@@ -46,6 +51,7 @@ export default function HomeScreen() {
     }, [load])
   );
 
+  if (!entered) return <WelcomeCover onContinue={() => setEntered(true)} />;
   if (loading) return <Loading />;
 
   return (
@@ -109,6 +115,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3FBFE",
   },
   content: {
+    flexGrow: 1,
     paddingHorizontal: spacing.md,
     paddingBottom: spacing.xl,
   },

@@ -1,4 +1,5 @@
 import { Redirect, Tabs } from "expo-router";
+import { requestHomePage } from "@/lib/homeTab";
 import { StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSession } from "@/context/SessionContext";
@@ -32,6 +33,13 @@ export default function TabsLayout() {
             />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            requestHomePage();
+            navigation.navigate("(home)", { screen: "index" });
+          },
+        })}
       />
       <Tabs.Screen
         name="favourites"
@@ -99,7 +107,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   tabLabel: {
-    fontSize: 11,
+    fontSize: 13,
     fontFamily: "Nunito_700Bold",
   },
 });

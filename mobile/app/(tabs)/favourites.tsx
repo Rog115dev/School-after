@@ -70,17 +70,17 @@ const styles = StyleSheet.create({
   },
   dotText: {
     color: "#fff",
-    fontSize: 12,
+    fontSize: 14,
   },
   title: {
     fontWeight: "800",
-    fontSize: 16,
+    fontSize: 18,
     color: colors.ink,
   },
   meta: {
     color: colors.muted,
     marginTop: 2,
-    fontSize: 13,
+    fontSize: 15,
   },
   chevron: {
     color: colors.muted,

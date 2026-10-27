@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontWeight: "800",
-    fontSize: 20,
+    fontSize: 22,
     color: colors.headerInk,
     marginBottom: 4,
   },
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: colors.ink,
     fontWeight: "700",
-    fontSize: 15,
+    fontSize: 17,
   },
   chevron: {
     color: colors.muted,

@@ -7,9 +7,9 @@ export function HomeHeader({ questionCount }: { questionCount: number }) {
   const { width } = useWindowDimensions();
   const innerWidth = Math.max(0, width - spacing.md * 2);
   const mascotWidth = Math.round((innerWidth * 3) / 7);
-  const mascotHeight = Math.round(mascotWidth * (656 / 490));
+  const mascotHeight = Math.round(mascotWidth * (600 / 318));
   const textWidth = Math.max(120, innerWidth - mascotWidth - 10);
-  const headlineSize = Math.max(24, Math.min(32, Math.round(textWidth / 6.2)));
+  const headlineSize = Math.max(26, Math.min(34, Math.round(textWidth / 5.8)));
 
   return (
     <View style={styles.wrap}>
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: colors.headerInk,
     fontFamily: fonts.extrabold,
-    fontSize: 15,
+    fontSize: 16,
     lineHeight: 18,
   },
   headline: {
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     color: "#5E7394",
     fontFamily: fonts.bold,
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 18,
   },
 });

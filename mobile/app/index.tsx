@@ -80,7 +80,7 @@ export default function GateScreen() {
 const styles = StyleSheet.create({
   lead: {
     color: colors.muted,
-    fontSize: 15,
+    fontSize: 17,
     lineHeight: 22,
     marginBottom: spacing.lg,
     textAlign: "center",

@@ -215,8 +215,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: colors.headerInk,
     fontFamily: fonts.extrabold,
-    fontSize: 15,
-    lineHeight: 18,
+    fontSize: 17,
+    lineHeight: 21,
   },
   logoWrap: {
     width: 46,
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   backText: {
     color: colors.headerInk,
     fontWeight: "700",
-    fontSize: 13,
+    fontSize: 15,
   },
   star: {
     fontSize: 26,
@@ -273,11 +273,12 @@ const styles = StyleSheet.create({
   pillText: {
     color: "#fff",
     fontWeight: "800",
-    fontSize: 18,
+    fontSize: 20,
     textAlign: "center",
   },
   leaf: {
-    flexGrow: 1,
+    flex: 1,
+    width: "100%",
     minHeight: 128,
     backgroundColor: colors.tile,
     borderRadius: 22,
@@ -293,8 +294,8 @@ const styles = StyleSheet.create({
   leafText: {
     color: colors.tileText,
     fontWeight: "800",
-    fontSize: 15,
+    fontSize: 17,
     textAlign: "center",
-    lineHeight: 19,
+    lineHeight: 22,
   },
 });

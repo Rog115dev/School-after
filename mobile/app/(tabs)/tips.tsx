@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "800",
     color: colors.ink,
   },
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     color: colors.muted,
     marginTop: 2,
     fontWeight: "600",
-    fontSize: 12,
+    fontSize: 14,
   },
   star: {
     fontSize: 24,

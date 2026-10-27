@@ -46,12 +46,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: colors.muted,
     fontWeight: "700",
-    fontSize: 12,
+    fontSize: 14,
     textTransform: "uppercase",
   },
   value: {
     color: colors.ink,
     fontWeight: "700",
-    fontSize: 16,
+    fontSize: 18,
   },
 });

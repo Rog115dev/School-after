@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 17,
     color: colors.muted,
     lineHeight: 22,
     marginBottom: spacing.lg,
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontWeight: "700",
-    fontSize: 16,
+    fontSize: 18,
   },
   field: {
     marginBottom: spacing.md,
@@ -196,6 +196,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: colors.ink,
     marginBottom: 6,
+    fontSize: 16,
   },
   input: {
     backgroundColor: colors.surface,
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    fontSize: 16,
+    fontSize: 18,
     color: colors.ink,
   },
   loading: {
@@ -258,6 +259,6 @@ const styles = StyleSheet.create({
     flex: 1,
     color: colors.ink,
     fontWeight: "700",
-    fontSize: 15,
+    fontSize: 17,
   },
 });
