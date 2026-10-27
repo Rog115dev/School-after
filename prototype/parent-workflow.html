@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Speech & Language Essentials — parent workflow</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .page-tabs {
+        display: flex;
+        gap: 8px;
+        padding: 16px 20px;
+        background: #fff;
+        border-bottom: 1px solid #e6eef7;
+      }
+      .page-tabs a {
+        text-decoration: none;
+        color: #1b3a6b;
+        font-weight: 800;
+        font-size: 13px;
+        border: 1px solid #d5e2f2;
+        border-radius: 999px;
+        padding: 7px 14px;
+        background: #fff;
+      }
+      .page-tabs a.on {
+        background: #1b3a6b;
+        color: #fff;
+        border-color: #1b3a6b;
+      }
+      body {
+        margin: 0;
+        font-family: Nunito, "Segoe UI", sans-serif;
+        color: #1b3a6b;
+        background: #f7faff;
+      }
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 32px 20px 56px;
+      }
+      h1 { margin: 0 0 8px; font-size: 28px; }
+      h2 { margin: 32px 0 8px; font-size: 20px; }
+      p { margin: 0; color: #5a6e8c; font-weight: 700; line-height: 1.45; }
+      .flow {
+        margin-top: 22px;
+        display: grid;
+        gap: 10px;
+        justify-items: center;
+      }
+      .row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+      .box {
+        width: 180px;
+        min-height: 58px;
+        background: #fff;
+        border: 1.5px solid #d5e2f2;
+        border-radius: 12px;
+        padding: 10px 12px;
+        text-align: center;
+      }
+      .box strong { display: block; font-size: 14px; }
+      .box span { display: block; margin-top: 2px; color: #5a6e8c; font-size: 12px; font-weight: 700; }
+      .mark { background: #1b3a6b; border-color: #1b3a6b; }
+      .mark strong, .mark span { color: #fff; }
+      .arrow { color: #9bb4d4; font-weight: 800; line-height: 1; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      th, td {
+        text-align: left;
+        padding: 12px 14px;
+        border-bottom: 1px solid #e6eef7;
+        vertical-align: top;
+        font-size: 14px;
+      }
+      th {
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #5a6e8c;
+        background: #f3f7fc;
+      }
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+      .chip {
+        background: #fff;
+        border: 1px solid #d5e2f2;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-weight: 800;
+        font-size: 13px;
+      }
+      .chip.on { background: #1b3a6b; color: #fff; border-color: #1b3a6b; }
+    </style>
+  </head>
+  <body>
+    <nav class="page-tabs">
+      <a href="index.html">Prototype</a>
+      <a class="on" href="parent-workflow.html">Workflow</a>
+    </nav>
+    <main>
+      <h1>Parent workflow</h1>
+      <p>Same screens and taps as the prototype. Back returns along this path. The footer stays fixed on every screen.</p>
+
+      <div class="flow">
+        <div class="box"><strong>Welcome</strong><span>email + school code</span></div>
+        <div class="arrow">↓ Unlock content</div>
+        <div class="box mark"><strong>Home</strong><span>8 question bubbles</span></div>
+        <div class="arrow">↓ speech bubble, or a footer tab</div>
+        <div class="row">
+          <div class="box"><strong>Question</strong><span>age or topic tiles</span></div>
+          <div class="box"><strong>Favourites</strong><span>saved topic</span></div>
+          <div class="box"><strong>Top tips</strong><span>three short videos</span></div>
+          <div class="box"><strong>Notes</strong><span>notebook + save</span></div>
+        </div>
+        <div class="arrow">↓ a tile, or the saved favourite</div>
+        <div class="box mark"><strong>Resources</strong><span>My child is under 5</span></div>
+        <div class="arrow">↓ Watch this video, Play this game, or Stories</div>
+        <div class="row">
+          <div class="box"><strong>Explanation</strong><span>Watch this video</span></div>
+          <div class="box"><strong>Myth vs Fact</strong><span>1 of 6, then the answer</span></div>
+          <div class="box"><strong>Stories</strong><span>two sample videos</span></div>
+        </div>
+      </div>
+
+      <h2>Screen by screen</h2>
+      <p>Copied from the prototype. A control with no destination stays on that screen.</p>
+      <table>
+        <thead>
+          <tr><th>Screen</th><th>What is on it</th><th>Tap goes to</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Welcome</td>
+            <td>Email, school code DEMO2026, Unlock content</td>
+            <td>Home</td>
+          </tr>
+          <tr>
+            <td>Home</td>
+            <td>Globe, Louise video, “What would you like to know?”, eight speech bubbles</td>
+            <td>That question</td>
+          </tr>
+          <tr>
+            <td>Question</td>
+            <td>Pill is the question. Tiles: under 5, 5 to 11, 11 or over. Back</td>
+            <td>Resources. Back to Home</td>
+          </tr>
+          <tr>
+            <td>Resources</td>
+            <td>Pill is “My child is under 5”. Watch this video, Play this game, Try this at home, Stories, advice sheet, source link. Star</td>
+            <td>Explanation, Myth vs Fact, or Stories. Try this at home, the sheet, and the link stay here. Back to Question</td>
+          </tr>
+          <tr>
+            <td>Explanation</td>
+            <td>Sample video for this topic. Back</td>
+            <td>Resources</td>
+          </tr>
+          <tr>
+            <td>Myth vs Fact</td>
+            <td>Step 1 of 6. Statement, then Myth or Fact. Feedback names the choice</td>
+            <td>Back to resources</td>
+          </tr>
+          <tr>
+            <td>Stories</td>
+            <td>Sam waits for a turn. A story about asking for help. Back</td>
+            <td>Home</td>
+          </tr>
+          <tr>
+            <td>Favourites</td>
+            <td>Saved topic “My child is under 5”</td>
+            <td>Resources</td>
+          </tr>
+          <tr>
+            <td>Top tips</td>
+            <td>Get face to face. Follow their lead. Add one word. Each says Tap to watch</td>
+            <td>Stays on Top tips</td>
+          </tr>
+          <tr>
+            <td>Notes</td>
+            <td>Notebook prompt and Save note</td>
+            <td>Stays on Notes</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Menu</h2>
+      <p>The menu on the sky header opens these. School access is the Welcome screen.</p>
+      <div class="chips">
+        <span class="chip">Home</span>
+        <span class="chip">Stories</span>
+        <span class="chip">Favourites</span>
+        <span class="chip">Top tips</span>
+        <span class="chip">Notes</span>
+        <span class="chip">School access</span>
+      </div>
+
+      <h2>Fixed footer</h2>
+      <p>Home, Favourites, Top tips, and Notes stay at the bottom of every screen. Home stays highlighted unless Favourites, Top tips, or Notes is open.</p>
+      <div class="chips">
+        <span class="chip on">Home</span>
+        <span class="chip">Favourites</span>
+        <span class="chip">Top tips</span>
+        <span class="chip">Notes</span>
+      </div>
+    </main>
+  </body>
+</html>

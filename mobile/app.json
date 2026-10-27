@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "OutSchool Parents",
+    "slug": "outschool-parents",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "outschool",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#1F8A5B"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.outschool.parents"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1F8A5B"
+      },
+      "package": "com.outschool.parents",
+      "usesCleartextTraffic": true
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

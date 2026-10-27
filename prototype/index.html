@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Speech & Language Essentials — prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #1b3a6b;
+        --muted: #5a6e8c;
+        --sub: #4f7fb5;
+        --line: #e6eef7;
+        --sky: #f7faff;
+        --phone: #fafcff;
+        --sheet: #ffffff;
+        --accent: #f07a3a;
+        --banner: #5b8fcf;
+        --brand: #5b8fcf;
+        --tile: #8eabd9;
+        --star: #f5c518;
+        --fact: #3d8b6e;
+        --danger: #c0392b;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Nunito, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: #e7eef7;
+      }
+      button, input { font: inherit; color: inherit; }
+      .bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 20px;
+        background: #fff;
+        border-bottom: 1px solid var(--line);
+      }
+      .bar strong { display: block; font-size: 15px; }
+      .bar span { color: var(--muted); font-size: 13px; font-weight: 700; }
+      .page-tabs {
+        display: flex;
+        gap: 8px;
+        padding: 12px 20px 0;
+        background: #fff;
+      }
+      .page-tabs a {
+        text-decoration: none;
+        color: var(--ink);
+        font-weight: 800;
+        font-size: 13px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 7px 14px;
+        background: #fff;
+      }
+      .page-tabs a.on {
+        background: var(--ink);
+        color: #fff;
+        border-color: var(--ink);
+      }
+      .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+      .controls button {
+        border: 1px solid var(--line);
+        background: #fff;
+        font-weight: 800;
+        font-size: 13px;
+        border-radius: 999px;
+        padding: 7px 12px;
+        cursor: pointer;
+      }
+      .controls button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+      .stage { display: grid; place-items: center; padding: 18px 12px 28px; }
+      .device {
+        width: 390px;
+        height: min(844px, calc(100vh - 88px));
+        background: var(--phone);
+        border: 8px solid #16315c;
+        border-radius: 32px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .device.tablet { width: min(768px, calc(100vw - 28px)); }
+      .screen { flex: 1; overflow: auto; display: flex; flex-direction: column; min-height: 0; }
+      .home {
+        padding: 18px 16px 8px;
+        background: var(--phone);
+      }
+      .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-right: 4px; }
+      .brand p { margin: 0; font-weight: 800; font-size: 17px; line-height: 22px; letter-spacing: -0.2px; }
+      .hero { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+      .hero .copy { flex: 1.05; padding-right: 2px; padding-bottom: 8px; min-width: 0; }
+      .hero h1 {
+        margin: 0;
+        font-size: 26px;
+        line-height: 31px;
+        letter-spacing: -0.6px;
+        font-weight: 800;
+      }
+      .hero .sub { margin: 8px 0 0; color: var(--sub); font-weight: 600; font-size: 13.5px; line-height: 18px; }
+      .louise {
+        width: 158px;
+        height: 188px;
+        margin-right: -6px;
+        object-fit: contain;
+        object-position: center bottom;
+        flex: 0 0 auto;
+        background: transparent;
+        pointer-events: none;
+      }
+      .device.tablet .louise { width: 210px; height: 240px; }
+      .device.tablet .hero h1 { font-size: 34px; line-height: 40px; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      .bubble-wrap { position: relative; padding-bottom: 10px; }
+      button.bubble {
+        position: relative;
+        width: 100%;
+        min-height: 118px;
+        text-align: left;
+        background: #fff;
+        border: 2px solid var(--c);
+        border-radius: 22px;
+        padding: 14px 14px 40px;
+        font-weight: 700;
+        font-size: 14.5px;
+        line-height: 19px;
+        letter-spacing: -0.15px;
+        cursor: pointer;
+      }
+      button.bubble .go {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        width: 28px;
+        height: 28px;
+        border-radius: 14px;
+        background: var(--c);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 16px;
+      }
+      .tail {
+        position: absolute;
+        left: 16px;
+        bottom: 2px;
+        width: 0;
+        height: 0;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        border-top: 12px solid var(--c);
+      }
+      .tail i {
+        position: absolute;
+        left: -7px;
+        bottom: 3px;
+        width: 0;
+        height: 0;
+        border-left: 7px solid transparent;
+        border-right: 7px solid transparent;
+        border-top: 9px solid #fff;
+      }
+      .tabs {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        background: #fff;
+        border-top: 1px solid var(--line);
+        height: 68px;
+        padding: 8px 0 10px;
+        flex: 0 0 68px;
+        position: sticky;
+        bottom: 0;
+        z-index: 4;
+      }
+      .tabs button {
+        border: none;
+        background: transparent;
+        color: var(--ink);
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+      }
+      .tabs button.on { color: var(--accent); }
+      .tabs svg { width: 22px; height: 22px; }
+      .sky {
+        flex: 1;
+        background: var(--sky);
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+      .cloud {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.55);
+        border-radius: 999px;
+      }
+      .apphead {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px 0;
+        position: relative;
+        z-index: 1;
+      }
+      .menu {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        border: 2px solid var(--ink);
+        background: rgba(255, 255, 255, 0.35);
+        display: grid;
+        gap: 4px;
+        place-content: center;
+        cursor: pointer;
+        flex: 0 0 auto;
+      }
+      .menu span { display: block; width: 16px; height: 2px; background: var(--ink); border-radius: 2px; }
+      .apptitle {
+        flex: 1;
+        text-align: center;
+        font-weight: 800;
+        font-size: 15px;
+        line-height: 18px;
+      }
+      .starrow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 4px 24px 8px;
+        position: relative;
+        z-index: 1;
+      }
+      .back {
+        border: none;
+        background: rgba(255, 255, 255, 0.65);
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .star {
+        border: none;
+        background: transparent;
+        font-size: 26px;
+        cursor: pointer;
+        color: #f7e08a;
+        line-height: 1;
+      }
+      .star.on { color: var(--star); }
+      .sheet {
+        flex: 1;
+        background: var(--sheet);
+        border-top-left-radius: 28px;
+        border-top-right-radius: 28px;
+        padding: 24px 24px 12px;
+        overflow: auto;
+      }
+      .pill {
+        display: block;
+        margin: 0 auto 24px;
+        background: var(--banner);
+        color: #fff;
+        border-radius: 999px;
+        padding: 12px 28px;
+        min-width: 78%;
+        text-align: center;
+        font-weight: 800;
+        font-size: 18px;
+        border: none;
+      }
+      .lead { color: var(--muted); font-size: 15px; line-height: 22px; text-align: center; margin: 0 0 24px; }
+      label { display: block; font-weight: 700; margin: 0 0 6px; }
+      .field {
+        width: 100%;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin-bottom: 16px;
+        font-weight: 700;
+      }
+      .primary, .danger-btn {
+        width: 100%;
+        border: none;
+        border-radius: 999px;
+        padding: 14px 18px;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      .primary { background: var(--banner); color: #fff; }
+      .danger-btn { background: #fde8e6; color: var(--danger); }
+      .pair { display: flex; gap: 14px; margin-bottom: 14px; }
+      .leaf {
+        flex: 1;
+        min-height: 118px;
+        border: none;
+        color: #fff;
+        font-weight: 800;
+        font-size: 15px;
+        line-height: 19px;
+        text-align: center;
+        cursor: pointer;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-top-left-radius: 28px;
+        border-top-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 28px;
+      }
+      .leaf svg { width: 36px; height: 36px; }
+      .badge {
+        width: 58px;
+        height: 58px;
+        border-radius: 29px;
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--ink);
+        font-size: 9px;
+        font-weight: 800;
+        line-height: 1.15;
+        display: grid;
+        place-items: center;
+      }
+      .listrow {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid var(--line);
+        background: transparent;
+        padding: 12px 0;
+        text-align: left;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .listico {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: var(--brand);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+      }
+      .progress { text-align: center; color: var(--brand); font-weight: 800; margin: 0 0 4px; }
+      .muted { text-align: center; color: var(--muted); margin: 0 0 16px; }
+      .statement {
+        background: #f3f7fc;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        min-height: 140px;
+        padding: 24px;
+        display: grid;
+        place-items: center;
+        font-size: 21px;
+        font-weight: 800;
+        line-height: 30px;
+        margin-bottom: 16px;
+      }
+      .choice-row { display: flex; gap: 12px; }
+      .choice-row .primary, .choice-row .danger-btn { flex: 1; }
+      .feedback {
+        background: #e8f2fc;
+        border-radius: 18px;
+        padding: 16px;
+      }
+      .feedback p { margin: 0 0 8px; line-height: 22px; }
+      .fav {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid var(--line);
+        background: transparent;
+        padding: 14px 0;
+        text-align: left;
+        cursor: pointer;
+      }
+      .dot {
+        width: 28px;
+        height: 28px;
+        border-radius: 14px;
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        flex: 0 0 auto;
+      }
+      .fav strong { display: block; font-size: 16px; }
+      .fav em { font-style: normal; color: var(--muted); font-size: 13px; font-weight: 700; }
+      .chev { margin-left: auto; color: var(--muted); font-size: 28px; font-weight: 300; }
+      .tip {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #f3f7fc;
+        border-radius: 22px;
+        padding: 16px;
+        margin-bottom: 12px;
+      }
+      .bulb {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        background: #f0b429;
+        color: #fff;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+      }
+      .tip strong { display: block; font-size: 16px; }
+      .tip em { font-style: normal; color: var(--muted); font-size: 12px; font-weight: 600; }
+      .notebook {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+        min-height: 220px;
+        background: #fffefa;
+        position: relative;
+      }
+      .notebook p { margin: 0 0 16px; font-style: italic; font-size: 16px; line-height: 24px; }
+      .notebook .line { height: 28px; border-bottom: 1px solid #e4eef8; }
+      .notebook .body {
+        margin-top: 12px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 28px;
+      }
+      .drawer {
+        position: absolute;
+        inset: 0;
+        background: rgba(27, 58, 107, 0.35);
+        z-index: 5;
+        display: none;
+      }
+      .drawer.on { display: block; }
+      .panel {
+        margin: 72px 0 0 16px;
+        width: 260px;
+        background: #fff;
+        border-radius: 22px;
+        padding: 16px;
+      }
+      .panel h2 { margin: 0 0 8px; font-size: 20px; }
+      .panel button {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        border: none;
+        background: transparent;
+        padding: 12px 4px;
+        font-weight: 700;
+        cursor: pointer;
+        border-bottom: 1px solid var(--line);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="page-tabs">
+      <a class="on" href="index.html">Prototype</a>
+      <a href="parent-workflow.html">Workflow</a>
+    </nav>
+    <header class="bar">
+      <div>
+        <strong>Speech & Language Essentials</strong>
+        <span>Prototype matched to the mobile app. Unzip, then open this file.</span>
+      </div>
+      <div class="controls" id="controls"></div>
+    </header>
+    <main class="stage">
+      <section class="device" id="device">
+        <div class="screen" id="screen"></div>
+        <nav class="tabs" id="tabs"></nav>
+        <div class="drawer" id="drawer"></div>
+      </section>
+    </main>
+    <script>
+      const questions = [
+        "When should I be worried?",
+        "How can I support early communication?",
+        "Why isn't my child talking yet?",
+        "My child is hard to understand",
+        "How can I help vocabulary to grow?",
+        "How can I help them understand what I say?",
+        "What about screen time?",
+        "Should I be concerned about stammering?",
+      ];
+      const colors = ["#F07A3A", "#E6B422", "#E56B9A", "#8B6CCF", "#4FA3E0", "#4CAF7A", "#F07A3A", "#E56B9A"];
+      const subtopics = ["My child is under 5", "My child is 5 to 11", "My child is 11 or over"];
+      const tileColors = ["#7EB6E8", "#8EABD9", "#8FC9A8", "#E0A0C8", "#F0B429", "#F0A06B"];
+      const state = { screen: "home", width: "phone", question: 0, menu: false, starred: false, myth: "none" };
+      const tabScreens = ["favourites", "tips", "notes"];
+
+      function globe(size) {
+        const s = size || 42;
+        return `<svg width="${s}" height="${s + 6}" viewBox="0 0 46 54" aria-hidden="true">
+          <circle cx="23" cy="21" r="18" fill="#fff" stroke="#5B8FCF" stroke-width="2.5"/>
+          <clipPath id="g${s}"><circle cx="23" cy="21" r="12"/></clipPath>
+          <g clip-path="url(#g${s})">
+            <rect x="11" y="9" width="5" height="24" fill="#EC407A"/>
+            <rect x="15" y="9" width="5" height="24" fill="#FF7043"/>
+            <rect x="19" y="9" width="5" height="24" fill="#FFCA28"/>
+            <rect x="23" y="9" width="5" height="24" fill="#66BB6A"/>
+            <rect x="27" y="9" width="5" height="24" fill="#29B6F6"/>
+            <rect x="31" y="9" width="4" height="24" fill="#7E57C2"/>
+          </g>
+          <path d="M16 36 L21 48 L28 36" fill="#fff" stroke="#5B8FCF" stroke-width="2"/>
+        </svg>`;
+      }
+
+      function bubble(title, color, action) {
+        return `<div class="bubble-wrap"><button class="bubble" style="--c:${color}" data-go="${action}">${title}<span class="go">›</span></button><span class="tail" style="--c:${color}"><i></i></span></div>`;
+      }
+
+      function icon(name) {
+        const common = `viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"`;
+        if (name === "home") return `<svg ${common}><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>`;
+        if (name === "star") return `<svg ${common}><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6-5.4-2.8L6.6 19.7l1-6L3.2 9.4l6.1-.9z"/></svg>`;
+        if (name === "bulb") return `<svg ${common}><path d="M9 18h6M10 21h4"/><path d="M8 14a5 5 0 1 1 8 0c-.8.8-1.5 1.6-1.7 2.6H9.7C9.5 15.6 8.8 14.8 8 14z"/></svg>`;
+        if (name === "play") return `<svg ${common}><circle cx="12" cy="12" r="9"/><path d="m10 9 6 3-6 3z" fill="currentColor" stroke="none"/></svg>`;
+        if (name === "book") return `<svg ${common}><path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v16H7.5A2.5 2.5 0 0 0 5 21.5z"/><path d="M5 5.5A2.5 2.5 0 0 1 7.5 3"/></svg>`;
+        return `<svg ${common}><path d="M4 20h4l10-10-4-4L4 16z"/><path d="m13 7 4 4"/></svg>`;
+      }
+
+      function chrome(inner, opts) {
+        const back = opts && opts.back
+          ? `<button class="back" data-go="${opts.back}">‹ Back</button>`
+          : `<span></span>`;
+        const star = opts && opts.star
+          ? `<button class="star ${state.starred ? "on" : ""}" data-star="1">${state.starred ? "★" : "☆"}</button>`
+          : `<span class="star">☆</span>`;
+        return `<div class="sky">
+          <div class="cloud" style="width:120px;height:36px;top:18px;left:-20px"></div>
+          <div class="cloud" style="width:90px;height:28px;top:48px;right:40px"></div>
+          <div class="apphead">
+            <button class="menu" data-menu="open" aria-label="Open menu"><span></span><span></span><span></span></button>
+            <div class="apptitle">Speech & Language Essentials</div>
+            <div>${globe(42)}</div>
+          </div>
+          <div class="starrow">${back}${star}</div>
+          <div class="sheet">${inner}</div>
+        </div>`;
+      }
+
+      function home() {
+        const cards = questions.map((title, i) => bubble(title, colors[i], `question:${i}`)).join("");
+        return `<div class="home">
+          <div class="brand">${globe(46)}<p>Speech & Language Essentials</p></div>
+          <div class="hero">
+            <div class="copy">
+              <h1>What would you<br>like to know?</h1>
+              <p class="sub">${questions.length} common questions from parents</p>
+            </div>
+            <video class="louise" src="louise.mp4" autoplay muted loop playsinline aria-label="Louise"></video>
+          </div>
+          <div class="grid">${cards}</div>
+        </div>`;
+      }
+
+      function unlock() {
+        return chrome(`
+          <div class="pill">Welcome</div>
+          <p class="lead">Enter your email every time. Your school code only needs to be saved once on this phone.</p>
+          <label>Email</label>
+          <div class="field">you@email.com</div>
+          <label>School code</label>
+          <div class="field">DEMO2026</div>
+          <button class="primary" data-go="home">Unlock content</button>
+        `);
+      }
+
+      function question() {
+        const tiles = subtopics.map((title, i) =>
+          `<button class="leaf" style="background:${tileColors[i]}" data-go="hub">${title}</button>`
+        );
+        const rows = `<div class="pair">${tiles[0]}${tiles[1]}</div><div class="pair">${tiles[2]}<span style="flex:1"></span></div>`;
+        return chrome(`<div class="pill">${questions[state.question]}</div>${rows}`, { back: "home" });
+      }
+
+      function hub() {
+        return chrome(`
+          <div class="pill">${subtopics[0]}</div>
+          <div class="pair">
+            <button class="leaf" style="background:#7EB6E8" data-go="videos">${icon("play")}Watch this video</button>
+            <button class="leaf" style="background:#8EABD9" data-go="myth"><span class="badge">MYTHS<br>VS<br>FACTS</span>Play this game</button>
+          </div>
+          <div class="pair">
+            <button class="leaf" style="background:#8FC9A8">${icon("home")}Try this at home</button>
+            <button class="leaf" style="background:#E0A0C8" data-go="stories">${icon("book")}Stories</button>
+          </div>
+          <div style="margin-top:16px">
+            <button class="listrow"><span class="listico">↓</span>Advice sheet to download</button>
+            <button class="listrow"><span class="listico">↗</span>Link to source</button>
+          </div>
+        `, { back: "question", star: true });
+      }
+
+      function videos() {
+        return chrome(`
+          <div class="pill">Explanation</div>
+          <p class="muted">Sample explanation video for this topic.</p>
+          <div class="statement">Video plays here</div>
+        `, { back: "hub", star: true });
+      }
+
+      function myth() {
+        const body = state.myth === "none"
+          ? `<div class="choice-row"><button class="danger-btn" data-myth="myth">⟵ Myth</button><button class="primary" data-myth="fact">Fact ⟶</button></div>`
+          : `<div class="feedback"><p>${state.myth === "myth" ? "Nice! This is a myth." : "Not quite. This is a myth."}</p><p>Some children catch up, and some need support. A late start is a reason to look more closely.</p><p class="muted" style="text-align:left">You chose: ${state.myth === "myth" ? "Myth" : "Fact"}</p><button class="primary" data-go="hub">Back to resources</button></div>`;
+        return chrome(`
+          <p class="progress">1 / 6</p>
+          <div class="pill">Myth vs Fact</div>
+          <p class="muted">Is this a myth or a fact?</p>
+          <div class="statement">Late talkers always catch up without any support.</div>
+          ${body}
+        `, { back: "hub", star: true });
+      }
+
+      function favourites() {
+        return chrome(`
+          <div class="pill">Favourites</div>
+          <button class="fav" data-go="hub">
+            <span class="dot" style="background:#7EC8E3">★</span>
+            <span><strong>${subtopics[0]}</strong><em>${questions[state.question]}</em></span>
+            <span class="chev">›</span>
+          </button>
+        `);
+      }
+
+      function tips() {
+        const items = ["Get face to face", "Follow their lead", "Add one word"].map((tip) =>
+          `<div class="tip"><div class="bulb">${icon("bulb")}</div><div style="flex:1"><strong>${tip}</strong><em>Tap to watch</em></div><span class="star">☆</span></div>`
+        ).join("");
+        return chrome(`<div class="pill">Top Tips</div>${items}`);
+      }
+
+      function notes() {
+        return chrome(`
+          <div class="pill">Notes</div>
+          <div class="notebook">
+            <p>Write down any questions you may have here, then think about who to speak to.</p>
+            <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+            <div class="body">Ask school about stammering after half term.</div>
+          </div>
+          <div style="margin:16px 0"><button class="primary">Save note</button></div>
+        `);
+      }
+
+      function stories() {
+        const items = ["Sam waits for a turn", "A story about asking for help"].map((title) =>
+          `<div class="tip"><div class="bulb" style="background:#8EABD9">${icon("book")}</div><div><strong>${title}</strong><em>Tap to watch</em></div></div>`
+        ).join("");
+        return chrome(`<div class="pill">Stories</div>${items}`, { back: "home" });
+      }
+
+      const views = { unlock, home, question, hub, videos, myth, favourites, tips, notes, stories };
+      const jumps = [["unlock", "Unlock"], ["home", "Home"], ["question", "Question"], ["hub", "Resources"], ["myth", "Myth game"], ["favourites", "Favourites"], ["tips", "Top tips"], ["notes", "Notes"]];
+
+      function render() {
+        document.getElementById("device").classList.toggle("tablet", state.width === "tablet");
+        document.getElementById("screen").innerHTML = views[state.screen]();
+        const tabs = document.getElementById("tabs");
+        const active = tabScreens.includes(state.screen) ? state.screen : "home";
+        tabs.innerHTML = [
+          ["home", "Home", "home"],
+          ["favourites", "Favourites", "star"],
+          ["tips", "Top tips", "bulb"],
+          ["notes", "Notes", "note"],
+        ].map(([id, label, name]) => `<button class="${active === id ? "on" : ""}" data-go="${id}">${icon(name)}<span>${label}</span></button>`).join("");
+        document.getElementById("controls").innerHTML = [
+          `<button class="${state.width === "phone" ? "on" : ""}" data-width="phone">Phone</button>`,
+          `<button class="${state.width === "tablet" ? "on" : ""}" data-width="tablet">Tablet</button>`,
+          ...jumps.map(([id, label]) => `<button class="${state.screen === id ? "on" : ""}" data-go="${id}">${label}</button>`),
+        ].join("");
+        const drawer = document.getElementById("drawer");
+        drawer.classList.toggle("on", state.menu);
+        drawer.innerHTML = state.menu ? `<div class="panel" data-stop="1"><h2>Menu</h2><p class="muted" style="text-align:left">Greenfield Primary</p>
+          ${[["home", "Home"], ["stories", "Stories"], ["favourites", "Favourites"], ["tips", "Top tips"], ["notes", "Notes"], ["unlock", "School access"]].map(([id, label]) => `<button data-go="${id}">${label}<span>›</span></button>`).join("")}
+        </div>` : "";
+      }
+
+      document.body.addEventListener("click", (event) => {
+        const width = event.target.closest("[data-width]");
+        if (width) { state.width = width.dataset.width; render(); return; }
+        if (event.target.closest("[data-menu]")) { state.menu = true; render(); return; }
+        if (event.target.id === "drawer") { state.menu = false; render(); return; }
+        if (event.target.closest("[data-star]")) { state.starred = !state.starred; render(); return; }
+        const myth = event.target.closest("[data-myth]");
+        if (myth) { state.myth = myth.dataset.myth; render(); return; }
+        const go = event.target.closest("[data-go]");
+        if (!go) return;
+        const target = go.dataset.go;
+        state.menu = false;
+        if (target.startsWith("question:")) {
+          state.question = Number(target.split(":")[1]);
+          state.screen = "question";
+        } else if (target === "myth") {
+          state.myth = "none";
+          state.screen = "myth";
+        } else {
+          state.screen = target;
+        }
+        render();
+      });
+
+      render();
+    </script>
+  </body>
+</html>

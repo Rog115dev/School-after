@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model School {
+  id         String           @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  code       String           @unique
+  expiresAt  DateTime
+  active     Boolean          @default(true)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  accessLogs AccessLog[]
+  events     AnalyticsEvent[]
+}
+
+model AccessLog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String
+  schoolId  String   @db.ObjectId
+  school    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([schoolId])
+  @@index([email])
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  schoolId  String?  @db.ObjectId
+  school    School?  @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  eventType String
+  payload   String   @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([schoolId])
+  @@index([eventType])
+}
+
+model Question {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String     @default("")
+  sortOrder   Int        @default(0)
+  published   Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  subtopics   Subtopic[]
+}
+
+model Subtopic {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  questionId  String   @db.ObjectId
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  title       String
+  description String   @default("")
+  sortOrder   Int      @default(0)
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  explanationVideos ExplanationVideo[]
+  scenarioVideos    ScenarioVideo[]
+  mythFactSets      MythFactSet[]
+  parentChallenges  ParentChallenge[]
+  links             ResourceLink[]
+  pdfs              ResourcePdf[]
+
+  @@index([questionId])
+}
+
+model ExplanationVideo {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  subtopicId String   @db.ObjectId
+  subtopic   Subtopic @relation(fields: [subtopicId], references: [id], onDelete: Cascade)
+  title      String
+  vimeoUrl   String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+}
+
+model ScenarioVideo {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  subtopicId String   @db.ObjectId
+  subtopic   Subtopic @relation(fields: [subtopicId], references: [id], onDelete: Cascade)
+  title      String
+  vimeoUrl   String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+}
+
+model MythFactSet {
+  id         String         @id @default(auto()) @map("_id") @db.ObjectId
+  subtopicId String         @db.ObjectId
+  subtopic   Subtopic       @relation(fields: [subtopicId], references: [id], onDelete: Cascade)
+  title      String         @default("Myth vs Fact")
+  createdAt  DateTime       @default(now())
+  items      MythFactItem[]
+}
+
+model MythFactItem {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  setId       String      @db.ObjectId
+  set         MythFactSet @relation(fields: [setId], references: [id], onDelete: Cascade)
+  statement   String
+  isMyth      Boolean
+  explanation String
+  sortOrder   Int         @default(0)
+}
+
+model ParentChallenge {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  subtopicId String   @db.ObjectId
+  subtopic   Subtopic @relation(fields: [subtopicId], references: [id], onDelete: Cascade)
+  title      String   @default("Try this at home")
+  vimeoUrl   String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+}
+
+model ResourceLink {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  subtopicId String   @db.ObjectId
+  subtopic   Subtopic @relation(fields: [subtopicId], references: [id], onDelete: Cascade)
+  title      String
+  url        String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+}
+
+model ResourcePdf {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  subtopicId String   @db.ObjectId
+  subtopic   Subtopic @relation(fields: [subtopicId], references: [id], onDelete: Cascade)
+  title      String
+  url        String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+}
+
+model TopTip {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  vimeoUrl  String
+  sortOrder Int      @default(0)
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Story {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String   @default("")
+  vimeoUrl    String
+  sortOrder   Int      @default(0)
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
