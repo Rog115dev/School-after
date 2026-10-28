@@ -5,7 +5,6 @@ build/
 .expo-shared/
 *.db
 *.db-journal
-.env
 .env.local
 .DS_Store
 coverage/
