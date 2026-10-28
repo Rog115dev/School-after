@@ -1,5 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api } from "../api";
+import { ListToolbar } from "../components/ListToolbar";
+import { VideoSourceField } from "../components/VideoSourceField";
+import { useListControls } from "../hooks/useListControls";
 
 type Story = {
   id: string;
@@ -10,14 +13,24 @@ type Story = {
   published: boolean;
 };
 
+function storySearch(s: Story) {
+  return `${s.title} ${s.description} ${s.vimeoUrl}`;
+}
+
+function storyStatus(s: Story) {
+  return s.published ? ("published" as const) : ("draft" as const);
+}
+
 export function StoriesPage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [vimeoUrl, setVimeoUrl] = useState("https://vimeo.com/76979871");
+  const [vimeoUrl, setVimeoUrl] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [busy, setBusy] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
+  const list = useListControls(stories, storySearch, storyStatus, 8);
 
   async function load() {
     setStories(await api<Story[]>("/api/content/stories"));
@@ -33,6 +46,7 @@ export function StoriesPage() {
     setError("");
     setSuccess("");
     try {
+      if (!vimeoUrl.trim()) throw new Error("Add a video link or upload a file");
       await api("/api/content/stories", {
         method: "POST",
         body: JSON.stringify({
@@ -45,6 +59,8 @@ export function StoriesPage() {
       });
       setTitle("");
       setDescription("");
+      setVimeoUrl("");
+      setAddOpen(false);
       setSuccess("Story published to the mobile Stories list.");
       await load();
     } catch (err) {
@@ -81,64 +97,80 @@ export function StoriesPage() {
       <div className="page-header">
         <div>
           <h1>Stories</h1>
-          <p>
-            Short story-style sample videos for the main Stories section of the
-            parent app.
-          </p>
+          <p>Story videos for the parent Stories library.</p>
         </div>
-        <div className="stat-card mini-stat">
-          <span className="muted">Published</span>
-          <strong>
-            {published}/{stories.length}
-          </strong>
+        <div className="row-actions">
+          <div className="stat-card mini-stat">
+            <span className="muted">Published</span>
+            <strong>
+              {published}/{stories.length}
+            </strong>
+          </div>
+          <button className="btn" type="button" onClick={() => setAddOpen((v) => !v)}>
+            {addOpen ? "Close form" : "Add story"}
+          </button>
         </div>
       </div>
 
       {error ? <div className="error">{error}</div> : null}
       {success ? <div className="alert success">{success}</div> : null}
 
-      <div className="panel">
-        <h2 className="section-title">Add story video</h2>
-        <form className="stack" onSubmit={onCreate}>
-          <div className="form-grid">
+      {addOpen ? (
+        <div className="panel">
+          <h2 className="section-title">Add story video</h2>
+          <form className="stack" onSubmit={onCreate}>
+            <div className="form-grid">
+              <label>
+                Title
+                <input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  placeholder="Sam waits for a turn"
+                />
+              </label>
+              <VideoSourceField value={vimeoUrl} onChange={setVimeoUrl} />
+            </div>
             <label>
-              Title
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                placeholder="Sam waits for a turn"
+              Description (optional)
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="What parents will learn from this story…"
               />
             </label>
-            <label>
-              Vimeo URL
-              <input
-                value={vimeoUrl}
-                onChange={(e) => setVimeoUrl(e.target.value)}
-                required
-              />
-            </label>
-          </div>
-          <label>
-            Description (optional)
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="What parents will learn from this story…"
-            />
-          </label>
-          <div>
-            <button className="btn" type="submit" disabled={busy || !title.trim()}>
-              {busy ? "Saving…" : "Publish story"}
-            </button>
-          </div>
-        </form>
-      </div>
+            <div>
+              <button
+                className="btn"
+                type="submit"
+                disabled={busy || !title.trim() || !vimeoUrl.trim()}
+              >
+                {busy ? "Saving…" : "Publish story"}
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : null}
 
       <div className="panel">
-        <h2 className="section-title">Library</h2>
-        <div className="list">
-          {stories.map((story) => (
+        <ListToolbar
+          search={list.search}
+          onSearch={list.setSearch}
+          searchPlaceholder="Search stories…"
+          status={list.status}
+          onStatus={list.setStatus}
+          page={list.page}
+          pageCount={list.pageCount}
+          onPage={list.setPage}
+          pageSize={list.pageSize}
+          onPageSize={list.setPageSize}
+          start={list.start}
+          end={list.end}
+          filteredCount={list.filteredCount}
+          totalCount={list.totalCount}
+        />
+        <div className="list list-scroll">
+          {list.pageItems.map((story) => (
             <div className="list-item" key={story.id}>
               <div>
                 <strong>
@@ -149,7 +181,7 @@ export function StoriesPage() {
                     {story.description}
                   </div>
                 ) : null}
-                <div className="muted" style={{ marginTop: 6 }}>
+                <div className="muted" style={{ marginTop: 4 }}>
                   {story.vimeoUrl}
                 </div>
               </div>
@@ -169,7 +201,12 @@ export function StoriesPage() {
           {!stories.length ? (
             <div className="empty-state">
               <strong>No stories yet</strong>
-              Add a Vimeo link above to populate the Stories screen.
+              Add a story above.
+            </div>
+          ) : !list.pageItems.length ? (
+            <div className="empty-state">
+              <strong>No matches</strong>
+              Try another search or filter.
             </div>
           ) : null}
         </div>

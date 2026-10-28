@@ -1,5 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api } from "../api";
+import { ListToolbar } from "../components/ListToolbar";
+import { useListControls } from "../hooks/useListControls";
 
 type School = {
   id: string;
@@ -10,6 +12,14 @@ type School = {
   _count?: { accessLogs: number; events: number };
 };
 
+function schoolSearch(s: School) {
+  return `${s.name} ${s.code}`;
+}
+
+function schoolStatus(s: School) {
+  return s.active ? ("active" as const) : ("disabled" as const);
+}
+
 export function SchoolsPage() {
   const [schools, setSchools] = useState<School[]>([]);
   const [name, setName] = useState("");
@@ -17,10 +27,11 @@ export function SchoolsPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [busy, setBusy] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
+  const list = useListControls(schools, schoolSearch, schoolStatus, 10);
 
   async function load() {
-    const data = await api<School[]>("/api/schools");
-    setSchools(data);
+    setSchools(await api<School[]>("/api/schools"));
   }
 
   useEffect(() => {
@@ -42,6 +53,7 @@ export function SchoolsPage() {
       });
       setName("");
       setExpiresAt("");
+      setAddOpen(false);
       setSuccess(
         created?.code
           ? `School created. Share code ${created.code} with parents.`
@@ -89,60 +101,86 @@ export function SchoolsPage() {
       <div className="page-header">
         <div>
           <h1>Schools & codes</h1>
-          <p>
-            Create a school, get a unique code, and share it with parents so they
-            can unlock the app.
-          </p>
+          <p>Search schools, filter by status, and page through the list.</p>
         </div>
-        <div className="stat-card mini-stat">
-          <span className="muted">Schools</span>
-          <strong>{schools.length}</strong>
+        <div className="row-actions">
+          <div className="stat-card mini-stat">
+            <span className="muted">Schools</span>
+            <strong>{schools.length}</strong>
+          </div>
+          <button className="btn" type="button" onClick={() => setAddOpen((v) => !v)}>
+            {addOpen ? "Close form" : "Add school"}
+          </button>
         </div>
       </div>
 
       {error ? <div className="error">{error}</div> : null}
       {success ? <div className="alert success">{success}</div> : null}
 
-      <div className="panel">
-        <h2 className="section-title">Add school</h2>
-        <form className="form-grid" onSubmit={onCreate}>
-          <label>
-            School name
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              placeholder="Greenfield Primary"
-            />
-          </label>
-          <label>
-            Access expires
-            <input
-              type="date"
-              value={expiresAt}
-              onChange={(e) => setExpiresAt(e.target.value)}
-              required
-            />
-          </label>
-          <button className="btn" type="submit" disabled={busy}>
-            {busy ? "Creating…" : "Create + generate code"}
-          </button>
-        </form>
-      </div>
+      {addOpen ? (
+        <div className="panel">
+          <h2 className="section-title">Add school</h2>
+          <form className="form-grid" onSubmit={onCreate}>
+            <label>
+              School name
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="Greenfield Primary"
+              />
+            </label>
+            <label>
+              Access expires
+              <input
+                type="date"
+                value={expiresAt}
+                onChange={(e) => setExpiresAt(e.target.value)}
+                required
+              />
+            </label>
+            <button className="btn" type="submit" disabled={busy}>
+              {busy ? "Creating…" : "Create + generate code"}
+            </button>
+          </form>
+        </div>
+      ) : null}
 
       <div className="panel">
-        <div className="panel-head">
-          <h2 className="section-title" style={{ margin: 0 }}>
-            All schools
-          </h2>
-        </div>
+        <ListToolbar
+          search={list.search}
+          onSearch={list.setSearch}
+          searchPlaceholder="Search name or code…"
+          status={list.status}
+          onStatus={list.setStatus}
+          statusOptions={[
+            { value: "all", label: "All" },
+            { value: "active", label: "Active" },
+            { value: "disabled", label: "Disabled" },
+          ]}
+          page={list.page}
+          pageCount={list.pageCount}
+          onPage={list.setPage}
+          pageSize={list.pageSize}
+          onPageSize={list.setPageSize}
+          start={list.start}
+          end={list.end}
+          filteredCount={list.filteredCount}
+          totalCount={list.totalCount}
+        />
+
         {!schools.length ? (
           <div className="empty-state">
             <strong>No schools yet</strong>
-            Add a school above. Parents enter the generated code on the mobile unlock screen.
+            Add a school above.
+          </div>
+        ) : !list.pageItems.length ? (
+          <div className="empty-state">
+            <strong>No matches</strong>
+            Try another search or filter.
           </div>
         ) : (
-          <div className="table-wrap">
+          <div className="table-wrap list-scroll">
             <table className="table">
               <thead>
                 <tr>
@@ -155,7 +193,7 @@ export function SchoolsPage() {
                 </tr>
               </thead>
               <tbody>
-                {schools.map((s) => (
+                {list.pageItems.map((s) => (
                   <tr key={s.id}>
                     <td>
                       <strong>{s.name}</strong>

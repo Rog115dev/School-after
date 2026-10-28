@@ -5,12 +5,14 @@ import { schoolsRouter } from "./routes/schools.js";
 import { accessRouter } from "./routes/access.js";
 import { contentRouter } from "./routes/content.js";
 import { analyticsRouter } from "./routes/analytics.js";
+import { uploadsRoot } from "./upload.js";
 
 const app = express();
-const PORT = Number(process.env.PORT || 4000);
+const PORT = Number(process.env.PORT || 4100);
 
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
+app.use("/uploads", express.static(uploadsRoot));
 
 app.get("/health", (_req, res) => {
   res.json({ ok: true, service: "outschool-api" });
@@ -24,6 +26,12 @@ app.use("/api/analytics", analyticsRouter);
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err);
+  if (err.message === "Only video files are allowed") {
+    return res.status(400).json({ error: err.message });
+  }
+  if (err.message?.includes("File too large")) {
+    return res.status(400).json({ error: "Video file is too large (max 250MB)" });
+  }
   res.status(500).json({ error: "Internal server error" });
 });
 

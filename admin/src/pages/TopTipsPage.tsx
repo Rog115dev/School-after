@@ -1,5 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api } from "../api";
+import { ListToolbar } from "../components/ListToolbar";
+import { VideoSourceField } from "../components/VideoSourceField";
+import { useListControls } from "../hooks/useListControls";
 
 type Tip = {
   id: string;
@@ -9,13 +12,23 @@ type Tip = {
   published: boolean;
 };
 
+function tipSearch(t: Tip) {
+  return `${t.title} ${t.vimeoUrl}`;
+}
+
+function tipStatus(t: Tip) {
+  return t.published ? ("published" as const) : ("draft" as const);
+}
+
 export function TopTipsPage() {
   const [tips, setTips] = useState<Tip[]>([]);
   const [title, setTitle] = useState("");
-  const [vimeoUrl, setVimeoUrl] = useState("https://vimeo.com/76979871");
+  const [vimeoUrl, setVimeoUrl] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [busy, setBusy] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
+  const list = useListControls(tips, tipSearch, tipStatus, 8);
 
   async function load() {
     setTips(await api<Tip[]>("/api/content/top-tips"));
@@ -31,6 +44,7 @@ export function TopTipsPage() {
     setError("");
     setSuccess("");
     try {
+      if (!vimeoUrl.trim()) throw new Error("Add a video link or upload a file");
       await api("/api/content/top-tips", {
         method: "POST",
         body: JSON.stringify({
@@ -41,6 +55,8 @@ export function TopTipsPage() {
         }),
       });
       setTitle("");
+      setVimeoUrl("");
+      setAddOpen(false);
       setSuccess("Tip published to the mobile Top Tips list.");
       await load();
     } catch (err) {
@@ -77,55 +93,74 @@ export function TopTipsPage() {
       <div className="page-header">
         <div>
           <h1>Top Tips</h1>
-          <p>Short tip videos shown in the parent app Top Tips section.</p>
+          <p>Short tip videos for the parent Top Tips tab.</p>
         </div>
-        <div className="stat-card mini-stat">
-          <span className="muted">Published</span>
-          <strong>
-            {published}/{tips.length}
-          </strong>
+        <div className="row-actions">
+          <div className="stat-card mini-stat">
+            <span className="muted">Published</span>
+            <strong>
+              {published}/{tips.length}
+            </strong>
+          </div>
+          <button className="btn" type="button" onClick={() => setAddOpen((v) => !v)}>
+            {addOpen ? "Close form" : "Add tip"}
+          </button>
         </div>
       </div>
 
       {error ? <div className="error">{error}</div> : null}
       {success ? <div className="alert success">{success}</div> : null}
 
-      <div className="panel">
-        <h2 className="section-title">Add tip</h2>
-        <form className="form-grid" onSubmit={onCreate}>
-          <label>
-            Title
-            <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              placeholder="Get face-to-face"
-            />
-          </label>
-          <label>
-            Vimeo URL
-            <input
-              value={vimeoUrl}
-              onChange={(e) => setVimeoUrl(e.target.value)}
-              required
-            />
-          </label>
-          <button className="btn" type="submit" disabled={busy || !title.trim()}>
-            {busy ? "Saving…" : "Publish tip"}
-          </button>
-        </form>
-      </div>
+      {addOpen ? (
+        <div className="panel">
+          <h2 className="section-title">Add tip</h2>
+          <form className="form-grid" onSubmit={onCreate}>
+            <label>
+              Title
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                placeholder="Get face-to-face"
+              />
+            </label>
+            <VideoSourceField value={vimeoUrl} onChange={setVimeoUrl} />
+            <button
+              className="btn"
+              type="submit"
+              disabled={busy || !title.trim() || !vimeoUrl.trim()}
+            >
+              {busy ? "Saving…" : "Publish tip"}
+            </button>
+          </form>
+        </div>
+      ) : null}
 
       <div className="panel">
-        <h2 className="section-title">Library</h2>
-        <div className="list">
-          {tips.map((tip) => (
+        <ListToolbar
+          search={list.search}
+          onSearch={list.setSearch}
+          searchPlaceholder="Search tips…"
+          status={list.status}
+          onStatus={list.setStatus}
+          page={list.page}
+          pageCount={list.pageCount}
+          onPage={list.setPage}
+          pageSize={list.pageSize}
+          onPageSize={list.setPageSize}
+          start={list.start}
+          end={list.end}
+          filteredCount={list.filteredCount}
+          totalCount={list.totalCount}
+        />
+        <div className="list list-scroll">
+          {list.pageItems.map((tip) => (
             <div className="list-item" key={tip.id}>
               <div>
                 <strong>
                   {tip.sortOrder}. {tip.title}
                 </strong>
-                <div className="muted" style={{ marginTop: 6 }}>
+                <div className="muted" style={{ marginTop: 4 }}>
                   {tip.vimeoUrl}
                 </div>
               </div>
@@ -145,7 +180,12 @@ export function TopTipsPage() {
           {!tips.length ? (
             <div className="empty-state">
               <strong>No tips yet</strong>
-              Add a short Vimeo tip above to fill the Top Tips screen.
+              Add a tip above.
+            </div>
+          ) : !list.pageItems.length ? (
+            <div className="empty-state">
+              <strong>No matches</strong>
+              Try another search or filter.
             </div>
           ) : null}
         </div>

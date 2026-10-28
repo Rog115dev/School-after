@@ -1,6 +1,8 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../api";
+import { Collapse } from "../components/Collapse";
+import { VideoSourceField } from "../components/VideoSourceField";
 
 type MythItem = {
   id: string;
@@ -31,10 +33,10 @@ export function SubtopicPage() {
   const [error, setError] = useState("");
 
   const [videoTitle, setVideoTitle] = useState("");
-  const [videoUrl, setVideoUrl] = useState("https://vimeo.com/76979871");
+  const [videoUrl, setVideoUrl] = useState("");
   const [scenarioTitle, setScenarioTitle] = useState("");
-  const [scenarioUrl, setScenarioUrl] = useState("https://vimeo.com/76979871");
-  const [challengeUrl, setChallengeUrl] = useState("https://vimeo.com/76979871");
+  const [scenarioUrl, setScenarioUrl] = useState("");
+  const [challengeUrl, setChallengeUrl] = useState("");
   const [linkTitle, setLinkTitle] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [pdfTitle, setPdfTitle] = useState("");
@@ -51,41 +53,59 @@ export function SubtopicPage() {
 
   async function addExplanation(e: FormEvent) {
     e.preventDefault();
+    if (!videoUrl.trim()) {
+      setError("Add a video link or upload a file");
+      return;
+    }
+    setError("");
     await api("/api/content/explanation-videos", {
       method: "POST",
       body: JSON.stringify({
         subtopicId: id,
         title: videoTitle,
-        vimeoUrl: videoUrl,
+        vimeoUrl: videoUrl.trim(),
       }),
     });
     setVideoTitle("");
+    setVideoUrl("");
     await load();
   }
 
   async function addScenario(e: FormEvent) {
     e.preventDefault();
+    if (!scenarioUrl.trim()) {
+      setError("Add a video link or upload a file");
+      return;
+    }
+    setError("");
     await api("/api/content/scenario-videos", {
       method: "POST",
       body: JSON.stringify({
         subtopicId: id,
         title: scenarioTitle,
-        vimeoUrl: scenarioUrl,
+        vimeoUrl: scenarioUrl.trim(),
       }),
     });
     setScenarioTitle("");
+    setScenarioUrl("");
     await load();
   }
 
   async function addChallenge(e: FormEvent) {
     e.preventDefault();
+    if (!challengeUrl.trim()) {
+      setError("Add a video link or upload a file");
+      return;
+    }
+    setError("");
     await api("/api/content/parent-challenges", {
       method: "POST",
       body: JSON.stringify({
         subtopicId: id,
-        vimeoUrl: challengeUrl,
+        vimeoUrl: challengeUrl.trim(),
       }),
     });
+    setChallengeUrl("");
     await load();
   }
 
@@ -148,6 +168,7 @@ export function SubtopicPage() {
       </div>
 
       <ResourcePanel
+        defaultOpen
         title="Explanation videos"
         items={subtopic.explanationVideos.map((v) => ({
           id: v.id,
@@ -162,11 +183,8 @@ export function SubtopicPage() {
             Title
             <input value={videoTitle} onChange={(e) => setVideoTitle(e.target.value)} required />
           </label>
-          <label>
-            Vimeo URL
-            <input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} required />
-          </label>
-          <button className="btn" type="submit">
+          <VideoSourceField value={videoUrl} onChange={setVideoUrl} />
+          <button className="btn" type="submit" disabled={!videoUrl.trim()}>
             Add video
           </button>
         </form>
@@ -196,11 +214,8 @@ export function SubtopicPage() {
               placeholder="Waiting for a turn"
             />
           </label>
-          <label>
-            Vimeo URL
-            <input value={scenarioUrl} onChange={(e) => setScenarioUrl(e.target.value)} required />
-          </label>
-          <button className="btn" type="submit">
+          <VideoSourceField value={scenarioUrl} onChange={setScenarioUrl} />
+          <button className="btn" type="submit" disabled={!scenarioUrl.trim()}>
             Add story video
           </button>
         </form>
@@ -217,15 +232,8 @@ export function SubtopicPage() {
         onRemove={remove}
       >
         <form className="form-grid" onSubmit={addChallenge}>
-          <label>
-            Vimeo URL
-            <input
-              value={challengeUrl}
-              onChange={(e) => setChallengeUrl(e.target.value)}
-              required
-            />
-          </label>
-          <button className="btn" type="submit">
+          <VideoSourceField value={challengeUrl} onChange={setChallengeUrl} />
+          <button className="btn" type="submit" disabled={!challengeUrl.trim()}>
             Add challenge video
           </button>
         </form>
@@ -340,19 +348,17 @@ function MythSets({
     return drafts[setId] ?? emptyItem();
   }
 
+  const statementCount = sets.reduce((count, set) => count + set.items.length, 0);
+
   return (
-    <div className="panel">
-      <div className="page-header">
-        <div>
-          <h2>Myth vs Fact</h2>
-          <p>
-            <strong>
-              {sets.reduce((count, set) => count + set.items.length, 0)} statements registered
-            </strong>{" "}
-            for this topic. You can add as many as you need. Parents choose how many to see, and the app picks that many at random.
-          </p>
-        </div>
-      </div>
+    <Collapse
+      title="Myth vs Fact"
+      subtitle={`${statementCount} statements · ${sets.length} set${sets.length === 1 ? "" : "s"}`}
+      defaultOpen={sets.length > 0}
+    >
+      <p style={{ marginBottom: 8 }}>
+        Parents choose how many statements to see; the app picks that many at random.
+      </p>
 
       <form
         className="form-grid"
@@ -536,7 +542,7 @@ function MythSets({
           </div>
         );
       })}
-    </div>
+    </Collapse>
   );
 }
 
@@ -586,16 +592,21 @@ function ResourcePanel({
   items,
   onRemove,
   children,
+  defaultOpen = false,
 }: {
   title: string;
   items: Array<{ id: string; label: string; meta: string; path: string }>;
   onRemove: (path: string) => Promise<void>;
   children: ReactNode;
+  defaultOpen?: boolean;
 }) {
   return (
-    <div className="panel">
-      <h2 className="section-title">{title}</h2>
-      <div className="list" style={{ marginBottom: 16 }}>
+    <Collapse
+      title={title}
+      subtitle={`${items.length} item${items.length === 1 ? "" : "s"}`}
+      defaultOpen={defaultOpen || items.length > 0}
+    >
+      <div className="list list-scroll" style={{ maxHeight: 220, marginBottom: 8 }}>
         {items.map((item) => (
           <div className="list-item" key={item.id}>
             <div>
@@ -608,13 +619,13 @@ function ResourcePanel({
           </div>
         ))}
         {!items.length ? (
-          <div className="empty-state" style={{ padding: "18px 10px" }}>
+          <div className="empty-state" style={{ padding: "10px" }}>
             <strong>None yet</strong>
             Use the form below to add the first item.
           </div>
         ) : null}
       </div>
       {children}
-    </div>
+    </Collapse>
   );
 }

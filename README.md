@@ -6,7 +6,7 @@ React Native (Expo) parent app + web admin + Express API for school-gated speech
 
 | App | Path | Port | Purpose |
 |-----|------|------|---------|
-| API | `backend/` | `4000` | Auth, schools/codes, CMS content, analytics |
+| API | `backend/` | `4100` | Auth, schools/codes, CMS content, analytics |
 | Admin | `admin/` | `5173` | Schools, content publishing, usage dashboard |
 | Mobile | `mobile/` | Expo | Parent unlock gate, content, Myth vs Fact, favourites/notes |
 
@@ -34,7 +34,7 @@ npm run dev:mobile
 - Parent unlock needs any valid email + that code
 
 Admin UI: http://localhost:5173  
-API health: http://localhost:4000/health
+API health: http://localhost:4100/health
 
 ## Product rules (v1)
 
@@ -48,9 +48,9 @@ API health: http://localhost:4000/health
 
 By default the app targets:
 
-- iOS simulator / web: `http://localhost:4000`
-- Android emulator: `http://10.0.2.2:4000`
-- Physical device: set `EXPO_PUBLIC_API_URL=http://YOUR_LAN_IP:4000` in `mobile/.env`
+- iOS simulator / web: `http://localhost:4100`
+- Android emulator: `http://10.0.2.2:4100`
+- Physical device: set `EXPO_PUBLIC_API_URL=http://YOUR_LAN_IP:4100` in `mobile/.env`
 
 ## Suggested next steps
 

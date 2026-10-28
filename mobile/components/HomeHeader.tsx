@@ -8,8 +8,8 @@ export function HomeHeader({ questionCount }: { questionCount: number }) {
   const innerWidth = Math.max(0, width - spacing.md * 2);
   const mascotWidth = Math.round((innerWidth * 3) / 7);
   const mascotHeight = Math.round(mascotWidth * 1.55);
-  const textWidth = Math.max(120, innerWidth - mascotWidth - 8);
-  const headlineSize = Math.max(26, Math.min(34, Math.round(textWidth / 5.8)));
+  const textWidth = Math.max(110, innerWidth - mascotWidth - 10);
+  const headlineSize = Math.max(40, Math.min(34, Math.round(textWidth / 5.8)));
 
   return (
     <View style={styles.wrap}>
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    marginBottom: 2,
+    marginBottom: 20,
   },
   brandTitle: {
     flex: 1,
@@ -61,12 +61,15 @@ const styles = StyleSheet.create({
     fontFamily: fonts.extrabold,
     fontSize: 16,
     lineHeight: 19,
+    textAlign: "center",
   },
   headline: {
     marginTop: 4,
     color: "#163A7A",
     fontFamily: fonts.extrabold,
     letterSpacing: -0.5,
+    marginBottom: 10,
+    marginLeft: 10,
   },
   sub: {
     marginTop: 4,

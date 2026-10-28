@@ -20,12 +20,12 @@ function resolveApiBase() {
     .split(":")[0];
 
   if (host && host !== "localhost" && host !== "127.0.0.1") {
-    return `http://${host}:4000`;
+    return `http://${host}:4100`;
   }
 
   // Android Studio AVD default bridge to host machine
-  if (Platform.OS === "android") return "http://10.0.2.2:4000";
-  return "http://localhost:4000";
+  if (Platform.OS === "android") return "http://10.0.2.2:4100";
+  return "http://localhost:4100";
 }
 
 export const API_BASE = resolveApiBase();

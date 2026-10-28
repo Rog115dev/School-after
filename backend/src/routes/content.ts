@@ -3,8 +3,25 @@ import { z } from "zod";
 import { prisma } from "../prisma.js";
 import { requireAdmin } from "../middleware/auth.js";
 import { asObjectId } from "../objectId.js";
+import { videoUpload, videoUrlSchema } from "../upload.js";
 
 export const contentRouter = Router();
+
+contentRouter.post(
+  "/uploads/video",
+  requireAdmin,
+  videoUpload.single("video"),
+  (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: "Choose a video file to upload" });
+    }
+    res.status(201).json({
+      url: `/uploads/videos/${req.file.filename}`,
+      fileName: req.file.originalname,
+      size: req.file.size,
+    });
+  }
+);
 
 const subtopicInclude = {
   explanationVideos: { orderBy: { sortOrder: "asc" as const } },
@@ -185,7 +202,7 @@ contentRouter.post("/explanation-videos", requireAdmin, async (req, res) => {
   const schema = z.object({
     subtopicId: z.string(),
     title: z.string().min(1),
-    vimeoUrl: z.string().url(),
+    vimeoUrl: videoUrlSchema,
     sortOrder: z.number().int().optional(),
   });
   const parsed = schema.safeParse(req.body);
@@ -203,7 +220,7 @@ contentRouter.post("/scenario-videos", requireAdmin, async (req, res) => {
   const schema = z.object({
     subtopicId: z.string(),
     title: z.string().min(1),
-    vimeoUrl: z.string().url(),
+    vimeoUrl: videoUrlSchema,
     sortOrder: z.number().int().optional(),
   });
   const parsed = schema.safeParse(req.body);
@@ -221,7 +238,7 @@ contentRouter.post("/parent-challenges", requireAdmin, async (req, res) => {
   const schema = z.object({
     subtopicId: z.string(),
     title: z.string().optional(),
-    vimeoUrl: z.string().url(),
+    vimeoUrl: videoUrlSchema,
     sortOrder: z.number().int().optional(),
   });
   const parsed = schema.safeParse(req.body);
@@ -421,7 +438,7 @@ contentRouter.get("/top-tips", requireAdmin, async (_req, res) => {
 contentRouter.post("/top-tips", requireAdmin, async (req, res) => {
   const schema = z.object({
     title: z.string().min(1),
-    vimeoUrl: z.string().url(),
+    vimeoUrl: videoUrlSchema,
     sortOrder: z.number().int().optional(),
     published: z.boolean().optional(),
   });
@@ -434,7 +451,7 @@ contentRouter.post("/top-tips", requireAdmin, async (req, res) => {
 contentRouter.put("/top-tips/:id", requireAdmin, async (req, res) => {
   const schema = z.object({
     title: z.string().min(1).optional(),
-    vimeoUrl: z.string().url().optional(),
+    vimeoUrl: videoUrlSchema.optional(),
     sortOrder: z.number().int().optional(),
     published: z.boolean().optional(),
   });
@@ -465,7 +482,7 @@ contentRouter.post("/stories", requireAdmin, async (req, res) => {
   const schema = z.object({
     title: z.string().min(1),
     description: z.string().optional(),
-    vimeoUrl: z.string().url(),
+    vimeoUrl: videoUrlSchema,
     sortOrder: z.number().int().optional(),
     published: z.boolean().optional(),
   });
@@ -479,7 +496,7 @@ contentRouter.put("/stories/:id", requireAdmin, async (req, res) => {
   const schema = z.object({
     title: z.string().min(1).optional(),
     description: z.string().optional(),
-    vimeoUrl: z.string().url().optional(),
+    vimeoUrl: videoUrlSchema.optional(),
     sortOrder: z.number().int().optional(),
     published: z.boolean().optional(),
   });

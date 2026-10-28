@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:4100";
 
 export function getToken() {
   return localStorage.getItem("outschool_admin_token");
@@ -23,6 +23,25 @@ export async function api<T>(
     throw new Error(data.error || `Request failed (${res.status})`);
   }
   return data as T;
+}
+
+export async function uploadVideo(file: File) {
+  const body = new FormData();
+  body.append("video", file);
+  const headers = new Headers();
+  const token = getToken();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+
+  const res = await fetch(`${API_BASE}/api/content/uploads/video`, {
+    method: "POST",
+    headers,
+    body,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || `Upload failed (${res.status})`);
+  }
+  return data as { url: string; fileName: string; size: number };
 }
 
 export { API_BASE };

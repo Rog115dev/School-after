@@ -108,12 +108,12 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: colors.banner,
     borderRadius: 999,
-    paddingVertical: 16,
+    paddingVertical: 5,
     alignItems: "center",
   },
   buttonText: {
     color: "#fff",
     fontFamily: fonts.extrabold,
-    fontSize: 18,
+    fontSize: 25,
   },
 });
