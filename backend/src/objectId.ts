@@ -1,7 +1,6 @@
-const OBJECT_ID = /^[a-fA-F0-9]{24}$/;
-
-/** Mongo ObjectIds are 24 hex characters. Older sessions stored SQLite ids. */
+/** Accept non-empty string ids (cuid / uuid). Legacy Mongo ObjectIds also pass. */
 export function asObjectId(value?: string | null) {
-  if (!value || !OBJECT_ID.test(value)) return null;
-  return value;
+  if (!value || typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
 }

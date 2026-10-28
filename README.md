@@ -10,7 +10,7 @@ React Native (Expo) parent app + web admin + Express API for school-gated speech
 | Admin | `admin/` | `5173` | Schools, content publishing, usage dashboard |
 | Mobile | `mobile/` | Expo | Parent unlock gate, content, Myth vs Fact, favourites/notes |
 
-The API stores content in MongoDB (`mongodb://127.0.0.1:27017/outschool`). Prisma writes need a replica set, so the local server must be started with `replSetName: rs0`. The connection string in `backend/.env` includes `?replicaSet=rs0`.
+The API uses **SQLite** via Prisma (`DATABASE_URL="file:./dev.db"` in `backend/.env`). No MongoDB install is required. The DB file is created under `backend/prisma/` on first `db:push`.
 
 ## Quick start
 
@@ -29,16 +29,16 @@ npm run dev:mobile
 
 ### VPS / fresh host
 
-After `npm install`, Prisma Client must exist before seed or start:
+No MongoDB. Copy `backend/.env.example` → `backend/.env`, then:
 
 ```bash
 cd backend
-npx prisma generate
+npm install
 npx prisma db push
 npm run db:seed
 ```
 
-`backend` runs `prisma generate` on `postinstall`, `db:seed`, and `build`. If seed still says the client “did not initialize”, run `npx prisma generate` once in `backend/` (or from the repo root with `--workspace=backend`).
+`backend` runs `prisma generate` on `postinstall`, `db:seed`, and `build`.
 
 ### Default logins
 
