@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || "http://23.27.148.186.171:4111";
+const API_BASE = import.meta.env.VITE_API_URL || "http://23.27.186.171:4111";
 
 export function getToken() {
   return localStorage.getItem("outschool_admin_token");
