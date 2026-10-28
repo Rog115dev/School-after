@@ -27,6 +27,19 @@ npm run dev:admin
 npm run dev:mobile
 ```
 
+### VPS / fresh host
+
+After `npm install`, Prisma Client must exist before seed or start:
+
+```bash
+cd backend
+npx prisma generate
+npx prisma db push
+npm run db:seed
+```
+
+`backend` runs `prisma generate` on `postinstall`, `db:seed`, and `build`. If seed still says the client “did not initialize”, run `npx prisma generate` once in `backend/` (or from the repo root with `--workspace=backend`).
+
 ### Default logins
 
 - **Admin:** `admin@outschool.local` / `admin123`
