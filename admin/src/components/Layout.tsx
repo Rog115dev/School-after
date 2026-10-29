@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../auth";
 
 const overview = [{ to: "/", label: "Usage", end: true, icon: "home" }];
@@ -11,11 +12,39 @@ const access = [{ to: "/schools", label: "Schools & codes", icon: "school" }];
 
 export function Layout() {
   const { user, logout } = useAuth();
+  const location = useLocation();
+  const [navOpen, setNavOpen] = useState(false);
   const initial = (user?.name || "A").slice(0, 1).toUpperCase();
 
+  useEffect(() => {
+    setNavOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!navOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setNavOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [navOpen]);
+
+  useEffect(() => {
+    document.body.classList.toggle("nav-locked", navOpen);
+    return () => document.body.classList.remove("nav-locked");
+  }, [navOpen]);
+
   return (
-    <div className="shell">
-      <aside className="sidebar">
+    <div className={`shell${navOpen ? " nav-open" : ""}`}>
+      <button
+        type="button"
+        className="nav-backdrop"
+        aria-label="Close menu"
+        tabIndex={navOpen ? 0 : -1}
+        onClick={() => setNavOpen(false)}
+      />
+
+      <aside className="sidebar" id="admin-sidebar">
         <div className="brand">
           <img src="/brand-logo.png" alt="Speech, Language & Communication" />
         </div>
@@ -29,15 +58,29 @@ export function Layout() {
 
       <div className="workspace">
         <header className="topbar">
-          <div>
-            <div className="topbar-kicker">Speech, Language & Communication</div>
-            <strong>Dashboard</strong>
+          <div className="topbar-left">
+            <button
+              type="button"
+              className="nav-toggle"
+              aria-label={navOpen ? "Close menu" : "Open menu"}
+              aria-expanded={navOpen}
+              aria-controls="admin-sidebar"
+              onClick={() => setNavOpen((open) => !open)}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+            <div>
+              <div className="topbar-kicker">Speech, Language & Communication</div>
+              <strong>Dashboard</strong>
+            </div>
           </div>
           <div className="topbar-user">
             <span className="avatar" aria-hidden>
               {initial}
             </span>
-            <div>
+            <div className="topbar-user-meta">
               <strong>{user?.name}</strong>
               <div className="muted">{user?.email}</div>
             </div>
