@@ -181,7 +181,7 @@ export function SchoolsPage() {
           </div>
         ) : (
           <div className="table-wrap list-scroll">
-            <table className="table">
+            <table className="table table-cards">
               <thead>
                 <tr>
                   <th>School</th>
@@ -195,10 +195,10 @@ export function SchoolsPage() {
               <tbody>
                 {list.pageItems.map((s) => (
                   <tr key={s.id}>
-                    <td>
+                    <td data-label="School">
                       <strong>{s.name}</strong>
                     </td>
-                    <td>
+                    <td data-label="Code">
                       <div className="row-actions">
                         <code>{s.code}</code>
                         <button
@@ -210,14 +210,14 @@ export function SchoolsPage() {
                         </button>
                       </div>
                     </td>
-                    <td>{new Date(s.expiresAt).toLocaleDateString()}</td>
-                    <td>{s._count?.accessLogs ?? 0}</td>
-                    <td>
+                    <td data-label="Expires">{new Date(s.expiresAt).toLocaleDateString()}</td>
+                    <td data-label="Unlocks">{s._count?.accessLogs ?? 0}</td>
+                    <td data-label="Status">
                       <span className={`badge ${s.active ? "" : "off"}`}>
                         {s.active ? "Active" : "Disabled"}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Actions">
                       <div className="row-actions">
                         <button
                           className="btn secondary small"

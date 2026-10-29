@@ -45,35 +45,37 @@ export function ListToolbar({
 }: Props) {
   return (
     <div className="list-toolbar">
-      <input
-        className="list-search"
-        value={search}
-        onChange={(e) => onSearch(e.target.value)}
-        placeholder={searchPlaceholder}
-      />
-      {!hideStatus ? (
-        <select
-          className="list-filter"
-          value={status}
-          onChange={(e) => onStatus(e.target.value as StatusFilter)}
-        >
-          {statusOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      ) : null}
-      <label className="list-size">
-        Show
+      <div className="list-toolbar-filters">
         <input
-          type="number"
-          min={1}
-          max={100}
-          value={pageSize}
-          onChange={(e) => onPageSize(Number(e.target.value))}
+          className="list-search"
+          value={search}
+          onChange={(e) => onSearch(e.target.value)}
+          placeholder={searchPlaceholder}
         />
-      </label>
+        {!hideStatus ? (
+          <select
+            className="list-filter"
+            value={status}
+            onChange={(e) => onStatus(e.target.value as StatusFilter)}
+          >
+            {statusOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        ) : null}
+        <label className="list-size">
+          Show
+          <input
+            type="number"
+            min={1}
+            max={100}
+            value={pageSize}
+            onChange={(e) => onPageSize(Number(e.target.value))}
+          />
+        </label>
+      </div>
       <div className="list-pager">
         <span className="muted">
           {filteredCount

@@ -183,7 +183,7 @@ export function DashboardPage() {
             </div>
           ) : (
             <div className="table-wrap list-scroll">
-              <table className="table">
+              <table className="table table-cards">
                 <thead>
                   <tr>
                     <th>School</th>
@@ -198,17 +198,17 @@ export function DashboardPage() {
                 <tbody>
                   {schoolList.pageItems.map((s) => (
                     <tr key={s.id}>
-                      <td>
+                      <td data-label="School">
                         <strong>{s.name}</strong>
                       </td>
-                      <td>
+                      <td data-label="Code">
                         <code>{s.code}</code>
                       </td>
-                      <td>{s.uniqueParents}</td>
-                      <td>{s.unlocks}</td>
-                      <td>{s.videoPlays}</td>
-                      <td>{s.mythCompletes}</td>
-                      <td>
+                      <td data-label="Parents">{s.uniqueParents}</td>
+                      <td data-label="Unlocks">{s.unlocks}</td>
+                      <td data-label="Videos">{s.videoPlays}</td>
+                      <td data-label="Myths">{s.mythCompletes}</td>
+                      <td data-label="Status">
                         <span className={`badge ${s.active ? "" : "off"}`}>
                           {s.active ? "Active" : "Off"}
                         </span>

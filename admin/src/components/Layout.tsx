@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../auth";
 
@@ -10,11 +10,24 @@ const content = [
 ];
 const access = [{ to: "/schools", label: "Schools & codes", icon: "school" }];
 
+const titles: Record<string, string> = {
+  "/": "Usage",
+  "/content": "Questions",
+  "/stories": "Stories",
+  "/top-tips": "Top Tips",
+  "/schools": "Schools & codes",
+};
+
 export function Layout() {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [navOpen, setNavOpen] = useState(false);
   const initial = (user?.name || "A").slice(0, 1).toUpperCase();
+
+  const pageTitle = useMemo(() => {
+    if (location.pathname.startsWith("/content/")) return "Subtopic";
+    return titles[location.pathname] || "Dashboard";
+  }, [location.pathname]);
 
   useEffect(() => {
     setNavOpen(false);
@@ -45,14 +58,39 @@ export function Layout() {
       />
 
       <aside className="sidebar" id="admin-sidebar">
-        <div className="brand">
-          <img src="/brand-logo.png" alt="Speech, Language & Communication" />
+        <div className="sidebar-head">
+          <div className="brand">
+            <img src="/brand-logo.png" alt="Speech, Language & Communication" />
+          </div>
+          <button
+            type="button"
+            className="sidebar-close"
+            aria-label="Close menu"
+            onClick={() => setNavOpen(false)}
+          >
+            ×
+          </button>
         </div>
 
         <div className="nav">
           <NavGroup label="Overview" items={overview} />
           <NavGroup label="Content" items={content} />
           <NavGroup label="Access" items={access} />
+        </div>
+
+        <div className="sidebar-foot">
+          <div className="sidebar-user">
+            <span className="avatar" aria-hidden>
+              {initial}
+            </span>
+            <div>
+              <strong>{user?.name}</strong>
+              <div className="muted">{user?.email}</div>
+            </div>
+          </div>
+          <button type="button" className="btn secondary small block" onClick={logout}>
+            Sign out
+          </button>
         </div>
       </aside>
 
@@ -67,13 +105,17 @@ export function Layout() {
               aria-controls="admin-sidebar"
               onClick={() => setNavOpen((open) => !open)}
             >
-              <span />
-              <span />
-              <span />
+              <MenuIcon />
             </button>
-            <div>
+            <img
+              className="topbar-logo"
+              src="/brand-logo.png"
+              alt=""
+              aria-hidden
+            />
+            <div className="topbar-title">
               <div className="topbar-kicker">Speech, Language & Communication</div>
-              <strong>Dashboard</strong>
+              <strong>{pageTitle}</strong>
             </div>
           </div>
           <div className="topbar-user">
@@ -84,16 +126,41 @@ export function Layout() {
               <strong>{user?.name}</strong>
               <div className="muted">{user?.email}</div>
             </div>
-            <button className="btn secondary small" onClick={logout}>
+            <button type="button" className="btn secondary small topbar-signout" onClick={logout}>
               Sign out
             </button>
           </div>
         </header>
+
+        <nav className="mobile-tabs" aria-label="Primary">
+          {[...overview, ...content, ...access].map((item) => (
+            <NavLink key={item.to} to={item.to} end={item.end}>
+              <span className="nav-ico">
+                <NavIcon name={item.icon} />
+              </span>
+              <span>{item.label.replace(" & codes", "")}</span>
+            </NavLink>
+          ))}
+        </nav>
+
         <main className="main">
           <Outlet />
         </main>
       </div>
     </div>
+  );
+}
+
+function MenuIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M4 7h16M4 12h16M4 17h16"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }
 
