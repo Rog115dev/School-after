@@ -189,9 +189,11 @@ export function ContentPage() {
                 placeholder="When should I be worried about my child's communication?"
               />
             </label>
-            <label>
+            <label className="field-block">
               Short description (optional)
               <textarea
+                className="text-area-prose"
+                rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Helps your team remember what this covers"
@@ -291,9 +293,11 @@ export function ContentPage() {
                         onChange={(e) => setEditTitle(e.target.value)}
                       />
                     </label>
-                    <label>
+                    <label className="field-block">
                       Description
                       <textarea
+                        className="text-area-prose"
+                        rows={3}
                         value={editDescription}
                         onChange={(e) => setEditDescription(e.target.value)}
                       />

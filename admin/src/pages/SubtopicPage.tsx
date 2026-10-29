@@ -152,7 +152,7 @@ export function SubtopicPage() {
     <div>
       <div className="page-header">
         <div>
-          <p className="muted" style={{ marginBottom: 8 }}>
+          <p className="muted page-crumb">
             <Link to="/content" style={{ fontWeight: 800, color: "var(--brand)" }}>
               ← Questions
             </Link>
@@ -160,9 +160,8 @@ export function SubtopicPage() {
             {subtopic.question.title}
           </p>
           <h1>{subtopic.title}</h1>
-          <p>
-            Build the resource hub for this subtopic — videos, myth game, links and
-            PDFs that parents see after they choose this tile.
+          <p className="page-lede">
+            Videos, myth game, links and PDFs for this tile.
           </p>
         </div>
       </div>
@@ -200,9 +199,8 @@ export function SubtopicPage() {
         }))}
         onRemove={remove}
       >
-        <p className="muted" style={{ marginBottom: 12 }}>
-          Short story-style clips shown on the Stories tile inside this subtopic.
-          For the main Stories library, use the Stories page in the sidebar.
+        <p className="muted field-hint">
+          Story clips for this subtopic. Main library: Stories in the sidebar.
         </p>
         <form className="form-grid" onSubmit={addScenario}>
           <label>
@@ -356,7 +354,7 @@ function MythSets({
       subtitle={`${statementCount} statements · ${sets.length} set${sets.length === 1 ? "" : "s"}`}
       defaultOpen={sets.length > 0}
     >
-      <p style={{ marginBottom: 8 }}>
+      <p className="field-hint">
         Parents choose how many statements to see; the app picks that many at random.
       </p>
 
@@ -383,7 +381,7 @@ function MythSets({
       </form>
 
       {!sets.length ? (
-        <div className="empty-state" style={{ padding: "22px 10px" }}>
+        <div className="empty-state empty-state-sm">
           <strong>No myth set yet</strong>
           Add a set, then write the statements parents will answer.
         </div>
@@ -392,7 +390,7 @@ function MythSets({
       {sets.map((set) => {
         const draft = draftFor(set.id);
         return (
-          <div key={set.id} style={{ marginTop: 22 }}>
+          <div key={set.id} className="myth-set">
             <form
               className="form-grid"
               onSubmit={(e) => {
@@ -433,13 +431,12 @@ function MythSets({
               </div>
             </form>
 
-            <div className="list" style={{ marginTop: 12 }}>
+            <div className="list myth-items">
               {set.items.map((item, index) =>
                 editingId === item.id ? (
                   <form
-                    className="list-item"
+                    className="myth-editor"
                     key={item.id}
-                    style={{ display: "grid" }}
                     onSubmit={(e) => {
                       e.preventDefault();
                       void run(async () => {
@@ -467,14 +464,12 @@ function MythSets({
                   </form>
                 ) : (
                   <div className="list-item" key={item.id}>
-                    <div>
+                    <div className="myth-item-body">
                       <span className={`badge ${item.isMyth ? "off" : ""}`}>
                         {index + 1}. {item.isMyth ? "Myth" : "Fact"}
                       </span>
-                      <div style={{ marginTop: 6 }}>
-                        <strong>{item.statement}</strong>
-                      </div>
-                      <div className="muted">{item.explanation}</div>
+                      <strong className="myth-statement">{item.statement}</strong>
+                      <div className="muted myth-explanation">{item.explanation}</div>
                     </div>
                     <div className="row-actions">
                       <button
@@ -508,7 +503,7 @@ function MythSets({
                 )
               )}
               {!set.items.length ? (
-                <div className="empty-state" style={{ padding: "18px 10px" }}>
+                <div className="empty-state empty-state-sm">
                   <strong>No statements yet</strong>
                   Add the first myth or fact below.
                 </div>
@@ -516,8 +511,7 @@ function MythSets({
             </div>
 
             <form
-              className="stack"
-              style={{ marginTop: 12 }}
+              className="myth-editor"
               onSubmit={(e) => {
                 e.preventDefault();
                 void run(async () => {
@@ -554,8 +548,8 @@ function ItemFields({
   onChange: (next: ItemDraft) => void;
 }) {
   return (
-    <>
-      <label>
+    <div className="myth-fields">
+      <label className="myth-type">
         Type
         <select
           value={draft.isMyth ? "myth" : "fact"}
@@ -565,25 +559,29 @@ function ItemFields({
           <option value="fact">Fact</option>
         </select>
       </label>
-      <label>
+      <label className="field-block">
         Statement
         <textarea
+          className="text-area-prose"
+          rows={3}
           value={draft.statement}
           onChange={(e) => onChange({ ...draft, statement: e.target.value })}
           required
           placeholder="The line the parent reads"
         />
       </label>
-      <label>
+      <label className="field-block">
         Explanation
         <textarea
+          className="text-area-prose"
+          rows={4}
           value={draft.explanation}
           onChange={(e) => onChange({ ...draft, explanation: e.target.value })}
           required
           placeholder="Shown after they answer"
         />
       </label>
-    </>
+    </div>
   );
 }
 
@@ -606,12 +604,12 @@ function ResourcePanel({
       subtitle={`${items.length} item${items.length === 1 ? "" : "s"}`}
       defaultOpen={defaultOpen || items.length > 0}
     >
-      <div className="list list-scroll" style={{ maxHeight: 220, marginBottom: 8 }}>
+      <div className={`list${items.length ? " list-scroll resource-list" : ""}`}>
         {items.map((item) => (
           <div className="list-item" key={item.id}>
-            <div>
+            <div className="list-item-copy">
               <strong>{item.label}</strong>
-              <div className="muted">{item.meta}</div>
+              <div className="muted break-url">{item.meta}</div>
             </div>
             <button className="btn danger small" onClick={() => onRemove(item.path)}>
               Remove
@@ -619,7 +617,7 @@ function ResourcePanel({
           </div>
         ))}
         {!items.length ? (
-          <div className="empty-state" style={{ padding: "10px" }}>
+          <div className="empty-state empty-state-sm">
             <strong>None yet</strong>
             Use the form below to add the first item.
           </div>

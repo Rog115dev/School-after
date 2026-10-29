@@ -131,9 +131,11 @@ export function StoriesPage() {
               </label>
               <VideoSourceField value={vimeoUrl} onChange={setVimeoUrl} />
             </div>
-            <label>
+            <label className="field-block">
               Description (optional)
               <textarea
+                className="text-area-prose"
+                rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="What parents will learn from this story…"
